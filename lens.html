@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Threatlens - AI Security Verification</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons (Fallback) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.447.0/lucide.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        display: ['Bricolage Grotesque', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        cyber: {
+                            black: '#050505',
+                            dark: '#0e0e12',
+                            blue: '#3b82f6',
+                            green: '#10b981',
+                            red: '#ef4444',
+                            orange: '#f59e0b',
+                            slate: '#1e293b'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #050505;
+            color: #ffffff;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        .bg-mesh {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 0% 0%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(16, 185, 129, 0.15) 0%, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        .bg-grid {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: -1;
+            background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        .industrial-panel {
+            border: 1px solid rgba(255,255,255,0.2);
+            background: #000;
+            padding: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .terminal-header {
+            border-left: 2px solid rgba(255,255,255,0.4);
+            border-top: 2px solid rgba(255,255,255,0.4);
+            padding: 6px 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            color: #ffffff;
+            display: inline-block;
+            margin-bottom: -1px;
+            font-weight: 800;
+        }
+
+        /* Enhanced Protocol Cards */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(59, 130, 246, 0.6);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px -15px rgba(59, 130, 246, 0.3);
+        }
+
+        .module-logo {
+            width: 58px;
+            height: 58px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            margin-bottom: 2.5rem;
+            transition: all 0.4s ease;
+            position: relative;
+            z-index: 10;
+        }
+
+        .glass-card:hover .module-logo {
+            border-color: rgba(59, 130, 246, 0.8);
+            box-shadow: 0 0 25px rgba(59, 130, 246, 0.5);
+            transform: scale(1.05);
+        }
+
+        .traffic-light {
+            width: 68px;
+            background: #000;
+            border: 2px solid #333;
+            padding: 16px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .light-bulb {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #111;
+            border: 2px solid #333;
+        }
+
+        .light-safe.active { background: #10b981; box-shadow: 0 0 30px #10b981; border: none; }
+        .light-suspicious.active { background: #f59e0b; box-shadow: 0 0 30px #f59e0b; border: none; }
+        .light-fraud.active { background: #ef4444; box-shadow: 0 0 30px #ef4444; border: none; }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 1.5rem 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #3b82f6;
+            width: 0%;
+            transition: width 0.4s cubic-bezier(0.1, 0.7, 1.0, 0.1);
+            box-shadow: 0 0 15px #3b82f6;
+        }
+
+        .radar {
+            width: 150px;
+            height: 150px;
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 50%;
+            position: relative;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+        .radar::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            background: conic-gradient(from 0deg, #3b82f6, transparent 90deg);
+            transform-origin: 0 0;
+            animation: radarRotate 4s linear infinite;
+            opacity: 0.4;
+        }
+        @keyframes radarRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .loader {
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top: 3px solid currentColor;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: revealUp 0.6s ease-out forwards;
+        }
+        @keyframes revealUp { to { opacity: 1; transform: translateY(0); } }
+
+        .nav-link {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            letter-spacing: 0.25em;
+            color: #ffffff;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            font-weight: 700;
+        }
+        .nav-link:hover { color: #3b82f6; }
+
+        .meta-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.5em;
+            color: #ffffff;
+            text-transform: uppercase;
+            font-weight: 800;
+        }
+    </style>
+</head>
+<body class="font-display">
+
+    <div class="bg-mesh"></div>
+    <div class="bg-grid"></div>
+    <div id="message-container"></div>
+
+    <!-- Navigation Header -->
+    <nav id="main-nav" class="flex items-center justify-between px-10 py-8 bg-black/60 backdrop-blur-xl border-b border-white/20 sticky top-0 z-50">
+        <div class="flex flex-col gap-1 cursor-pointer group" onclick="showView('home')">
+            <span class="meta-tag text-[10px] !text-white/60">PROJECT_INCUBATOR</span>
+            <span class="text-3xl font-black tracking-tighter text-white uppercase italic">Threatlens</span>
+        </div>
+        
+        <div class="hidden lg:flex gap-16">
+            <button onclick="showView('home')" class="nav-link">Core_Engine</button>
+            <a href="#about" class="nav-link">About_Us</a>
+            <a href="#features" class="nav-link">Protocols</a>
+            <a href="#collective" class="nav-link">Collective_Nodes</a>
+        </div>
+
+        <div class="hidden lg:flex items-center gap-10">
+             <span class="meta-tag !text-blue-400 font-black text-[10px]">SYSTEM_SECURE</span>
+             <button class="bg-white text-black px-8 py-3 rounded-sm text-[12px] font-black tracking-[0.3em] hover:bg-blue-600 hover:text-white transition-all uppercase shadow-lg shadow-white/5">
+                 Execute
+             </button>
+        </div>
+    </nav>
+
+    <div id="app-content" class="pb-20">
+        <!-- Landing View -->
+        <div id="view-home">
+            <section class="pt-32 pb-24 px-6 text-center">
+                <div class="inline-flex items-center gap-2 bg-white/20 border border-white/30 text-white px-6 py-2 rounded-sm text-[12px] font-black tracking-[0.4em] uppercase mb-10 reveal">
+                    Neural Core Protocol: Active
+                </div>
+                <h1 class="text-4xl md:text-6xl font-black tracking-tighter mb-8 max-w-6xl mx-auto leading-tight reveal uppercase italic text-white">
+                    Unmasking <span class="text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-white/60">Digital Deception.</span>
+                </h1>
+                <p class="text-xl text-slate-100 max-w-3xl mx-auto mb-16 font-light leading-relaxed reveal">
+                    Advanced forensic auditing for the modern web. We provide grounded neural verification with absolute transparency.
+                </p>
+            </section>
+
+            <!-- Station Directive (About Us & Roadmap) -->
+            <section id="about" class="py-32 px-10 max-w-7xl mx-auto border-y border-white/20 bg-white/[0.03]">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-24 items-start">
+                    <div class="reveal">
+                        <span class="meta-tag !text-blue-500 mb-8 block font-black">STATION_MISSION</span>
+                        <h2 class="text-6xl font-black tracking-tighter italic uppercase text-white mb-10 leading-none">The Neural Barrier <br>Against Fraud.</h2>
+                        <div class="space-y-8 text-slate-100 text-lg leading-relaxed font-light">
+                            <p>Threatlens is an advanced digital defense nexus. In an era of pervasive synthetic media and sophisticated social engineering, our mission is to provide an impenetrable layer of communication verification.</p>
+                            <p>We believe that in the age of "Post-Truth," automation must be met with even more intelligent verification. Threatlens utilizes state-of-the-art neural heuristics to dismantle deceptions hidden within emails, malicious URLs, and viral misinformation.</p>
+                            <p class="text-white leading-relaxed font-bold italic text-xl border-l-4 border-blue-600 pl-8">We show the "Forensic Trail" that informs every AI verdict.</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 gap-6 reveal">
+                        <div class="industrial-panel !p-12 border-white/30 bg-black rounded-sm shadow-2xl">
+                            <div class="space-y-12">
+                                <div class="flex gap-10 items-start">
+                                    <span class="meta-tag !text-white mt-1 text-lg font-black italic">01</span>
+                                    <div>
+                                        <h4 class="text-white font-black uppercase tracking-widest text-sm mb-3">Neural Forensic Hub</h4>
+                                        <p class="text-white text-xs font-mono uppercase tracking-widest leading-loose text-white/40">Cross-platform heuristic analysis across communication streams.</p>
+                                    </div>
+                                </div>
+                                <div class="flex gap-10 items-start">
+                                    <span class="meta-tag !text-white mt-1 text-lg font-black italic">02</span>
+                                    <div>
+                                        <h4 class="text-white font-black uppercase tracking-widest text-sm mb-3">Explainable Intelligence</h4>
+                                        <p class="text-white text-xs font-mono uppercase tracking-widest leading-loose text-white/40">Real-time metadata evidence logs provided for every neural resolution.</p>
+                                    </div>
+                                </div>
+                                <!-- Roadmap Section -->
+                                <div class="pt-10 border-t border-white/10 mt-6">
+                                    <span class="meta-tag !text-orange-500 font-black text-[9px] mb-6 block tracking-[0.4em]">STATION_ROADMAP_2026</span>
+                                    <div class="space-y-6">
+                                        <div class="flex gap-6 items-center">
+                                            <i data-lucide="video" class="w-5 h-5 text-white/40"></i>
+                                            <span class="text-white text-[11px] font-black uppercase tracking-widest">Protocol_06: Video Forensic (Beta)</span>
+                                        </div>
+                                        <div class="flex gap-6 items-center">
+                                            <i data-lucide="mic" class="w-5 h-5 text-white/40"></i>
+                                            <span class="text-white text-[11px] font-black uppercase tracking-widest">Protocol_07: Audio Deepfake Scan</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Feature Suite Grid -->
+            <section id="features" class="max-w-7xl mx-auto px-6 py-32">
+                <div class="flex flex-wrap justify-center gap-10">
+                    <div onclick="showView('email')" class="glass-card p-12 rounded-sm reveal cursor-pointer group w-full md:w-[calc(50%-20px)] lg:w-[calc(33.33%-27px)]">
+                        <div class="module-logo text-blue-400">
+                            <svg xmlns="http://www.w3.org/2008/Math/SVG" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                        </div>
+                        <h3 class="text-3xl font-black mb-5 uppercase italic tracking-tighter text-white">Email Forensic</h3>
+                        <p class="text-white text-base leading-relaxed mb-10 font-medium italic text-white/60">Neural diagnostic of communication payloads and signatures.</p>
+                        <div class="meta-tag !text-blue-400 !tracking-widest font-black text-xs">Protocol_01</div>
+                    </div>
+
+                    <div onclick="showView('web')" class="glass-card p-12 rounded-sm reveal cursor-pointer group w-full md:w-[calc(50%-20px)] lg:w-[calc(33.33%-27px)]">
+                        <div class="module-logo text-emerald-400">
+                            <svg xmlns="http://www.w3.org/2008/Math/SVG" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 0 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg>
+                        </div>
+                        <h3 class="text-3xl font-black mb-5 uppercase italic tracking-tighter text-white">URL Tracer</h3>
+                        <p class="text-white text-base leading-relaxed mb-10 font-medium italic text-white/60">Domain reputation auditing and integrity mapping.</p>
+                        <div class="meta-tag !text-green-400 !tracking-widest font-black text-xs">Protocol_02</div>
+                    </div>
+
+                    <div onclick="showView('social')" class="glass-card p-12 rounded-sm reveal cursor-pointer group w-full md:w-[calc(50%-20px)] lg:w-[calc(33.33%-27px)]">
+                        <div class="module-logo text-orange-400">
+                            <svg xmlns="http://www.w3.org/2008/Math/SVG" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-share-2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>
+                        </div>
+                        <h3 class="text-3xl font-black mb-5 uppercase italic tracking-tighter text-white">Post Audit</h3>
+                        <p class="text-white text-base leading-relaxed mb-10 font-medium italic text-white/60">Social media verification across Reddit and Meta platforms.</p>
+                        <div class="meta-tag !text-orange-400 !tracking-widest font-black text-xs">Protocol_03</div>
+                    </div>
+
+                    <div onclick="showView('article')" class="glass-card p-12 rounded-sm reveal cursor-pointer group w-full md:w-[calc(50%-20px)] lg:w-[calc(33.33%-27px)]">
+                        <div class="module-logo text-red-400">
+                            <svg xmlns="http://www.w3.org/2008/Math/SVG" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-newspaper"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>
+                        </div>
+                        <h3 class="text-3xl font-black mb-5 uppercase italic tracking-tighter text-white">Truth Check</h3>
+                        <p class="text-white text-base leading-relaxed mb-10 font-medium italic text-white/60">Article authenticity verification against global archives.</p>
+                        <div class="meta-tag !text-red-400 !tracking-widest font-black text-xs">Protocol_04</div>
+                    </div>
+
+                    <div onclick="showView('payload')" class="glass-card p-12 rounded-sm reveal cursor-pointer group w-full md:w-[calc(50%-20px)] lg:w-[calc(33.33%-27px)]">
+                        <div class="module-logo text-cyan-400">
+                            <svg xmlns="http://www.w3.org/2008/Math/SVG" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield-alert"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+                        </div>
+                        <h3 class="text-3xl font-black mb-5 uppercase italic tracking-tighter text-white">Payload Sentry</h3>
+                        <p class="text-white text-base leading-relaxed mb-10 font-medium italic text-white/60">Heuristic file audit for hidden malware and code anomalies.</p>
+                        <div class="meta-tag !text-cyan-400 !tracking-widest font-black text-xs">Protocol_05</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Compact Footer -->
+            <footer id="collective" class="mt-40 border-t border-white/10 pt-20 pb-16 px-10 bg-black">
+                <div class="max-w-7xl mx-auto flex flex-col gap-20">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-20 items-end">
+                        <div class="flex flex-col gap-4 text-left">
+                            <span class="meta-tag !text-white/30 font-black text-[9px] tracking-[0.4em]">STATION_IDENTITY</span>
+                            <span class="font-black text-3xl tracking-tighter uppercase italic text-white leading-none">Trustforge</span>
+                            <p class="text-white/40 text-xs font-mono uppercase tracking-[0.1em] mt-2 max-w-sm leading-relaxed">High-fidelity neural forensic intelligence nexus.</p>
+                        </div>
+                        <div class="flex flex-col gap-8 justify-end">
+                            <span class="meta-tag text-right md:text-left !text-white/30 font-black text-[9px] tracking-[0.4em]">COLLECTIVE_NODES</span>
+                            <div class="grid grid-cols-2 gap-x-12 gap-y-6">
+                                <a href="https://www.linkedin.com/in/talha-chougle-15a063334" target="_blank" class="text-white font-bold text-sm tracking-tight hover:text-blue-400 transition-colors">Talha Chougle</a>
+                                <a href="https://www.linkedin.com/in/md-zaid-chaudhary-a072a0371" target="_blank" class="text-white font-bold text-sm tracking-tight hover:text-blue-400 transition-colors">Zaid Chaudhary</a>
+                                <a href="https://www.linkedin.com/in/shaikh-riyaan-akeelahmed-77859837b" target="_blank" class="text-white font-bold text-sm tracking-tight hover:text-blue-400 transition-colors">Riyaan Shaikh</a>
+                                <a href="https://www.linkedin.com/in/uzair-karedia-61080a348" target="_blank" class="text-white font-bold text-sm tracking-tight hover:text-blue-400 transition-colors">Uzair Karedia</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col md:flex-row justify-center items-center pt-8 border-t border-white/5">
+                        <p class="text-white/20 text-[9px] font-mono uppercase tracking-[0.6em] font-black italic">System_Secure_Forensic_Network_2026</p>
+                    </div>
+                </div>
+            </footer>
+        </div>
+
+        <div id="module-view" class="hidden min-h-screen pt-12 px-6">
+            <div class="max-w-7xl mx-auto">
+                <button onclick="showView('home')" class="mb-12 flex items-center gap-4 text-white hover:text-blue-400 transition-colors group font-black uppercase tracking-widest text-xs">
+                    <span class="meta-tag group-hover:text-blue-400 transition-colors">BACK_TO_CORE_TERMINAL</span>
+                </button>
+                <div id="module-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Template -->
+    <template id="result-template">
+        <div class="result-card mt-12 space-y-16 reveal">
+            <div class="industrial-panel">
+                <div class="terminal-header">Intelligence_Output</div>
+                <div class="flex flex-col md:flex-row justify-between gap-12 mt-12">
+                    <div class="flex-1">
+                        <span class="meta-tag !text-white block mb-6 font-black text-sm">Target_Diagnostic</span>
+                        <h3 class="target-title text-4xl font-black uppercase tracking-tighter italic text-white mb-2"></h3>
+                        <p class="target-purpose text-slate-400 text-lg mb-10 italic"></p>
+                        <div class="flex items-center gap-8">
+                             <div class="inline-block bg-white text-black px-8 py-3 font-mono text-lg font-black uppercase tracking-widest">
+                                Trust Index: <span class="trust-score"></span>
+                             </div>
+                             <div class="text-white/60 font-mono font-bold uppercase tracking-widest text-sm">
+                                <span class="origin-label">Source:</span> <span class="target-owner text-white"></span>
+                             </div>
+                        </div>
+                    </div>
+                    <div class="traffic-light-container">
+                        <div class="traffic-light">
+                            <div class="light-bulb light-fraud"></div>
+                            <div class="light-bulb light-suspicious"></div>
+                            <div class="light-bulb light-safe"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="industrial-panel">
+                <div class="terminal-header">Neural_Diagnostic_Check</div>
+                <div id="technical-ratings" class="grid grid-cols-1 md:grid-cols-3 gap-10 mt-10"></div>
+                <div class="mt-12 p-8 bg-white/5 border border-white/10 flex items-center justify-between rounded-sm">
+                    <span class="meta-tag !text-blue-400 font-black">AI_MODEL_CONFIDENCE</span>
+                    <span class="confidence-score font-mono text-2xl font-black text-white"></span>
+                </div>
+            </div>
+
+            <div id="contextual-details" class="industrial-panel">
+                <div class="terminal-header">Forensic_Integrity_Logs</div>
+                <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-12 font-mono text-white text-lg">
+                    <div class="space-y-10">
+                        <div>
+                            <span class="meta-tag !text-white/40 block mb-2 font-black detail-label-1">Domain_Authority</span>
+                            <div class="detail-val-1 p-3 bg-white/5 border border-white/10 text-xs font-black uppercase tracking-widest">Verified</div>
+                        </div>
+                        <div>
+                            <span class="meta-tag !text-white/40 block mb-2 font-black detail-label-2">SSL_Status</span>
+                            <div class="detail-val-2 p-3 bg-white/5 border border-white/10 text-xs font-black uppercase tracking-widest">Secure</div>
+                        </div>
+                    </div>
+                    <div class="space-y-10">
+                        <div>
+                            <span class="meta-tag !text-white/40 block mb-2 font-black detail-label-3">Reputation</span>
+                            <div class="detail-val-3 p-3 bg-white/5 border border-white/10 text-xs font-black uppercase tracking-widest">Good</div>
+                        </div>
+                        <div>
+                            <span class="meta-tag !text-white/40 block mb-2 font-black detail-label-4">Blacklist</span>
+                            <div class="detail-val-4 p-3 bg-white/5 border border-white/10 text-xs font-black uppercase tracking-widest">Clean</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="industrial-panel">
+                <div class="terminal-header">Neural_Reasoning_Protocol</div>
+                <div class="mt-8 p-10 border border-white/20 bg-white/[0.03] rounded-sm">
+                    <div class="flex items-center gap-4 mb-6">
+                        <i data-lucide="brain" class="w-6 h-6 text-blue-500"></i>
+                        <span class="meta-tag !text-blue-400 font-black">LOGICAL_DIAGNOSTIC</span>
+                    </div>
+                    <p class="education-text text-white text-2xl font-light leading-relaxed italic"></p>
+                </div>
+            </div>
+
+            <div class="industrial-panel">
+                <div class="terminal-header">Defensive_Action_Advice</div>
+                <ul class="advice-list space-y-10 mt-12"></ul>
+                <div class="flex flex-wrap gap-10 mt-20 pt-20 border-t border-white/30 action-buttons"></div>
+            </div>
+        </div>
+    </template>
+
+    <script>
+        const apiKey = "AIzaSyDGNRiwRp0j8ZQxqPAWubFVKtrSck6fgS8";
+        const BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=" + apiKey;
+
+        let currentAuditData = null;
+        let activeScanInterval = null;
+
+        /**
+         * Recalibrates output to ensure it follows the 0-100% logistical scale.
+         * Detects if the value is a decimal (0.0 - 1.0) and normalizes to 100-base.
+         */
+        function normalizeScore(val) {
+            if (typeof val !== 'number') return 0;
+            // If val is 0.98, return 98. If val is 98, return 98.
+            if (val > 0 && val <= 1) return (val * 100).toFixed(1);
+            return val.toFixed(1);
+        }
+
+        function refreshIcons() {
+            if (window.lucide && typeof window.lucide.createIcons === 'function') {
+                window.lucide.createIcons();
+            }
+        }
+
+        function showMessage(msg) {
+            const container = document.getElementById('message-container');
+            const el = document.createElement('div');
+            el.className = 'message-box text-white font-mono text-sm fixed bottom-10 right-10 bg-black border-2 border-white/40 p-8 rounded-sm shadow-2xl z-[100]';
+            el.innerText = msg;
+            container.appendChild(el);
+            setTimeout(() => el.remove(), 4000);
+        }
+
+        async function geminiCall(prompt) {
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            status: { type: "STRING", enum: ["safe", "suspicious", "fraud"] },
+                            domain_name: { type: "STRING" },
+                            purpose: { type: "STRING" },
+                            trust_index: { type: "NUMBER" },
+                            owner: { type: "STRING" },
+                            tech_audit: { type: "ARRAY", items: { type: "OBJECT", properties: { part: { type: "STRING" }, score: { type: "NUMBER" } } } },
+                            detail_1: { type: "STRING" },
+                            detail_2: { type: "STRING" },
+                            detail_3: { type: "STRING" },
+                            detail_4: { type: "STRING" },
+                            confidence: { type: "NUMBER" },
+                            summary: { type: "STRING" },
+                            education: { type: "STRING" },
+                            tactical_advice: { type: "ARRAY", items: { type: "STRING" } }
+                        },
+                        required: ["status", "trust_index", "summary", "education", "tactical_advice"]
+                    }
+                }
+            };
+            const response = await fetch(BASE_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const data = await response.json();
+            return JSON.parse(data.candidates[0].content.parts[0].text);
+        }
+
+        function showView(viewName) {
+            const home = document.getElementById('view-home');
+            const module = document.getElementById('module-view');
+            const nav = document.getElementById('main-nav');
+            const container = document.getElementById('module-container');
+            
+            if (viewName === 'home') {
+                home.classList.remove('hidden');
+                module.classList.add('hidden');
+                nav.classList.remove('hidden');
+            } else {
+                home.classList.add('hidden');
+                module.classList.remove('hidden');
+                nav.classList.add('hidden'); 
+                renderModule(viewName, container);
+            }
+            window.scrollTo(0, 0);
+            refreshIcons();
+        }
+
+        function renderModule(name, container) {
+            const isEmail = name === 'email';
+            const isSocial = name === 'social';
+            const isArticle = name === 'article';
+            const isWeb = name === 'web';
+            const isPayload = name === 'payload';
+
+            let protocolName = "Forensic Engine";
+            let placeholder = "Paste content...";
+            let workspace = "";
+
+            if (isEmail) {
+                protocolName = "Email Forensic";
+                placeholder = "Paste email content or headers...";
+                workspace = generateSplitWorkspace(name, placeholder, "Upload Source");
+            } else if (isSocial) {
+                protocolName = "Post Audit";
+                placeholder = "Paste social post link or text...";
+                workspace = generateSplitWorkspace(name, placeholder, "Upload Image/Post");
+            } else if (isArticle) {
+                protocolName = "Truth Check";
+                placeholder = "Paste article body text...";
+                workspace = generateSplitWorkspace(name, placeholder, "Upload Article Photo");
+            } else if (isPayload) {
+                protocolName = "Payload Sentry";
+                workspace = `
+                    <div class="w-full bg-white/[0.05] p-12 border-2 border-white/20 shadow-xl flex flex-col rounded-sm mb-12 items-center justify-center text-center">
+                        <span class="meta-tag text-[9px] mb-6 !text-white/40 italic">001_Secure_Dropzone</span>
+                        <div class="mb-8"><i data-lucide="shield-check" class="w-16 h-16 text-white/20 mb-4 mx-auto"></i></div>
+                        <label class="bg-white text-black px-12 py-5 rounded-sm font-black uppercase tracking-widest text-[11px] hover:bg-blue-600 hover:text-white transition-all shadow-xl cursor-pointer flex items-center justify-center mb-8">
+                            Select_File_to_Scan
+                            <input type="file" id="file-upload" class="hidden" onchange="document.getElementById('payload-status').innerText = 'FILE_LOCKED: ' + this.files[0].name">
+                        </label>
+                        <p id="payload-status" class="text-white/40 font-mono text-[10px] uppercase italic">Awaiting Binary Input...</p>
+                        <div class="flex gap-4 mt-8 pt-8 border-t border-white/5 w-full justify-center">
+                             <button onclick="handleScan('${name}')" id="scan-btn" class="min-w-[200px] h-14 bg-white/10 text-white font-black uppercase tracking-widest text-[11px] hover:bg-blue-600 transition-all rounded-sm">Initialize_Forensic_Scan</button>
+                             <button onclick="abortScan()" id="abort-btn" class="hidden h-14 bg-red-600 text-white font-black uppercase tracking-widest text-[11px] hover:bg-red-700 transition-all flex items-center justify-center rounded-sm px-8">Abort</button>
+                        </div>
+                    </div>
+                `;
+            } else if (isWeb) {
+                protocolName = "URL Tracer";
+                placeholder = "Paste target URL or domain name...";
+                workspace = `
+                    <div class="w-full bg-white/[0.05] p-10 border-2 border-white/20 shadow-xl flex flex-col rounded-sm mb-12">
+                        <span class="meta-tag text-[9px] mb-4 !text-white/40 italic">001_URL_Entry</span>
+                        <textarea id="scan-input" class="w-full h-24 bg-transparent border-none text-white font-mono text-lg outline-none resize-none placeholder-white/20 leading-relaxed" placeholder="${placeholder}"></textarea>
+                        <div class="flex gap-4 pt-6 border-t border-white/10 mt-4">
+                            <button onclick="handleScan('${name}')" id="scan-btn" class="min-w-[200px] h-14 bg-white text-black font-black uppercase tracking-widest text-[11px] hover:bg-blue-600 hover:text-white transition-all shadow-xl flex items-center justify-center rounded-sm">Initialize_Scan</button>
+                            <button onclick="abortScan()" id="abort-btn" class="hidden h-14 bg-red-600 text-white font-black uppercase tracking-widest text-[11px] hover:bg-red-700 transition-all flex items-center justify-center rounded-sm px-8">Abort</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = `
+                <div class="reveal">
+                    <div id="audit-terminal" class="hidden w-full bg-black p-10 border-2 border-white/20 shadow-2xl flex flex-col justify-center items-center text-center min-h-[350px] mb-12">
+                        <div class="radar mb-8"></div>
+                        <p class="meta-tag animate-pulse !text-blue-400 tracking-[0.4em] font-black uppercase mb-4">Neural_Audit_Active</p>
+                        <div class="progress-container max-w-xl mx-auto"><div id="progress-bar" class="progress-fill"></div></div>
+                        <p id="progress-val" class="font-mono text-xl text-white font-black italic">0%</p>
+                    </div>
+
+                    <div class="mb-10">
+                        <span class="meta-tag block mb-4 text-white font-black tracking-[0.5em] text-xs italic">Protocol_Execution_${name.toUpperCase()}</span>
+                        <h2 class="text-4xl font-black tracking-tighter italic uppercase text-white leading-none">${protocolName}</h2>
+                    </div>
+                    
+                    ${workspace}
+
+                    <div id="result-anchor"></div>
+                </div>
+            `;
+            refreshIcons();
+        }
+
+        function generateSplitWorkspace(name, placeholder, uploadLabel) {
+            return `
+                <div class="grid grid-cols-[1fr_200px_1fr] gap-6 mb-12">
+                    <div class="bg-white/[0.05] p-8 border-2 border-white/20 shadow-xl flex flex-col rounded-sm">
+                        <span class="meta-tag text-[9px] mb-4 !text-white/40 italic">001_Write_Source</span>
+                        <textarea id="scan-input" class="w-full h-24 bg-transparent border-none text-white font-mono text-lg outline-none resize-none placeholder-white/20 leading-relaxed" placeholder="${placeholder}"></textarea>
+                    </div>
+                    <div class="flex flex-col justify-center gap-4 px-2">
+                        <button onclick="handleScan('${name}')" id="scan-btn" class="w-full h-14 bg-white text-black font-black uppercase tracking-widest text-[11px] hover:bg-blue-600 hover:text-white transition-all shadow-xl flex items-center justify-center rounded-sm">Initialize_Scan</button>
+                        <button onclick="abortScan()" id="abort-btn" class="hidden w-full h-14 bg-red-600 text-white font-black uppercase tracking-widest text-[11px] hover:bg-red-700 transition-all flex items-center justify-center rounded-sm">Abort</button>
+                    </div>
+                    <div class="bg-white/[0.05] p-8 border-2 border-white/20 shadow-xl flex flex-col justify-center items-center text-center rounded-sm">
+                        <span class="meta-tag text-[9px] mb-4 !text-white/40 italic">002_Visual_Input</span>
+                        <label class="meta-tag !text-white/80 cursor-pointer hover:!text-blue-400 transition-colors italic border-b-2 border-white/20 pb-1 text-[11px]">
+                            ${uploadLabel}
+                            <input type="file" id="file-upload" class="hidden" onchange="document.getElementById('scan-input').value = 'SOURCE_LOCKED: ' + this.files[0].name">
+                        </label>
+                    </div>
+                </div>
+            `;
+        }
+
+        function abortScan() {
+            if (activeScanInterval) clearInterval(activeScanInterval);
+            document.getElementById('audit-terminal').classList.add('hidden');
+            const btn = document.getElementById('scan-btn');
+            btn.disabled = false;
+            btn.innerHTML = 'Initialize_Scan';
+            document.getElementById('abort-btn').classList.add('hidden');
+            showMessage('SCAN_ABORTED_BY_OPERATOR');
+        }
+
+        async function handleScan(type) {
+            const inputElement = document.getElementById('scan-input');
+            const input = inputElement ? inputElement.value : 'FILE_UPLOAD';
+            
+            const terminal = document.getElementById('audit-terminal');
+            const anchor = document.getElementById('result-anchor');
+            const btn = document.getElementById('scan-btn');
+            const abortBtn = document.getElementById('abort-btn');
+            
+            anchor.innerHTML = '';
+            terminal.classList.remove('hidden');
+            abortBtn.classList.remove('hidden');
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            btn.disabled = true;
+            btn.innerHTML = '<div class="loader"></div>';
+
+            const bar = document.getElementById('progress-bar');
+            const val = document.getElementById('progress-val');
+            let p = 0;
+            activeScanInterval = setInterval(() => {
+                if (p < 96) {
+                    p += Math.random() * 8;
+                    if (p > 96) p = 96;
+                    bar.style.width = p + '%';
+                    val.innerText = Math.floor(p) + '%';
+                }
+            }, 250);
+
+            try {
+                let prompt = "";
+                if (type === 'web') {
+                    prompt = `Forensic URL scan: ${input}. JSON. Domain info, trust index (0-100), owner, tech audit array, domain auth, ssl, reputation, blacklist. Education: explain why. Confidence 0-100. IMPORTANT: RETURN ALL SCORES AS NUMBERS BETWEEN 0 AND 100.`;
+                } else if (type === 'social') {
+                    prompt = `Forensic social media post scan: ${input}. JSON. trust_index (AUTHENTICITY: 80-100 human, 0-40 AI), tech_audit (Synthetic Integrity, Temporal Consistency, Geo-Authenticity scores). Detail fields: AI Status, Region, Age, Metadata. Education: explain why. Confidence 0-100. IMPORTANT: RETURN ALL SCORES AS NUMBERS BETWEEN 0 AND 100.`;
+                } else if (type === 'article') {
+                    prompt = `Forensic article scan: ${input}. JSON. trust_index (AUTHENTICITY score), tech_audit (Linguistic, Global Match, Integrity scores). Detail fields: Writing Signature, Source Originality, Author, Global Match. Education: explain why. Confidence 0-100. IMPORTANT: RETURN ALL SCORES AS NUMBERS BETWEEN 0 AND 100.`;
+                } else if (type === 'payload') {
+                    prompt = `Forensic file scan. JSON. status (safe/suspicious/fraud), trust_index (SAFETY score), tech_audit (Malware, Binary, Impact scores). detail fields: Static Analysis, Binary Signature, Entropy Risk, Heuristic Score. Confidence 0-100. IMPORTANT: RETURN ALL SCORES AS NUMBERS BETWEEN 0 AND 100.`;
+                } else {
+                    prompt = `Forensic email scan: ${input}. JSON. verdict, confidence (0-100), education, safety steps. IMPORTANT: RETURN ALL SCORES AS NUMBERS BETWEEN 0 AND 100.`;
+                }
+                
+                const result = await geminiCall(prompt);
+                currentAuditData = result;
+                
+                clearInterval(activeScanInterval);
+                bar.style.width = '100%';
+                val.innerText = '100%';
+                
+                setTimeout(() => {
+                    terminal.classList.add('hidden');
+                    abortBtn.classList.add('hidden');
+                    renderResult(result, type);
+                    btn.disabled = false;
+                    btn.innerHTML = 'Initialize_Scan';
+                    showMessage('AUDIT_SEQUENCE_RESOLVED');
+                    document.getElementById('result-anchor').scrollIntoView({ behavior: 'smooth' });
+                }, 800);
+            } catch (err) {
+                if (activeScanInterval) clearInterval(activeScanInterval);
+                terminal.classList.add('hidden');
+                abortBtn.classList.add('hidden');
+                btn.disabled = false;
+                btn.innerHTML = 'Initialize_Scan';
+                showMessage('ERROR: SYSTEM_LINK_SEVERED');
+            }
+        }
+
+        function renderResult(data, type) {
+            const anchor = document.getElementById('result-anchor');
+            const temp = document.getElementById('result-template');
+            const clone = temp.content.cloneNode(true);
+            
+            // Normalize all scores using helper function
+            const conf = normalizeScore(data.confidence || 0);
+            const trust = normalizeScore(data.trust_index || (data.status === 'safe' ? 95 : 20));
+
+            clone.querySelector('.target-title').innerText = data.domain_name || "Forensic_Audit_Target";
+            clone.querySelector('.target-purpose').innerText = data.purpose || "Diagnostic summary incomplete.";
+            clone.querySelector('.trust-score').innerText = trust + "%";
+            clone.querySelector('.target-owner').innerText = data.owner || "Anonymous";
+            clone.querySelector('.confidence-score').innerText = conf + "%";
+            clone.querySelector(`.light-${data.status}`).classList.add('active');
+
+            if (type === 'social' || type === 'article' || type === 'payload') {
+                clone.querySelector('.traffic-light-container').classList.add('hidden');
+                if (type === 'social') {
+                    clone.querySelector('.detail-label-1').innerText = "AI_Generation_Status";
+                    clone.querySelector('.detail-label-2').innerText = "Region_of_Origin";
+                    clone.querySelector('.detail-label-3').innerText = "Post_Temporal_Age";
+                    clone.querySelector('.detail-label-4').innerText = "Metadata_Integrity";
+                    clone.querySelector('.origin-label').innerText = "Platform:";
+                } else if (type === 'article') {
+                    clone.querySelector('.detail-label-1').innerText = "Writing_Signature";
+                    clone.querySelector('.detail-label-2').innerText = "Source_Originality";
+                    clone.querySelector('.detail-label-3').innerText = "Author_Attribution";
+                    clone.querySelector('.detail-label-4').innerText = "Global_Index_Match";
+                    clone.querySelector('.origin-label').innerText = "Publisher:";
+                } else if (type === 'payload') {
+                    clone.querySelector('.detail-label-1').innerText = "Static_Analysis";
+                    clone.querySelector('.detail-label-2').innerText = "Binary_Signature";
+                    clone.querySelector('.detail-label-3').innerText = "Entropy_Risk";
+                    clone.querySelector('.detail-label-4').innerText = "Heuristic_Score";
+                    clone.querySelector('.origin-label').innerText = "Signee:";
+                    clone.querySelector('.traffic-light-container').classList.remove('hidden');
+                }
+            }
+
+            if (data.tech_audit) {
+                const tr = clone.querySelector('#technical-ratings');
+                data.tech_audit.forEach(a => {
+                    const normalizedA = normalizeScore(a.score || 0);
+                    const div = document.createElement('div');
+                    div.className = "p-6 bg-white/5 border border-white/10 rounded-sm";
+                    div.innerHTML = `
+                        <span class="meta-tag !text-white/40 block mb-2 text-[10px]">${a.part}</span>
+                        <div class="text-2xl font-black text-white">${normalizedA}%</div>
+                        <div class="h-1 bg-white/10 mt-2 overflow-hidden"><div class="h-full bg-blue-500" style="width:${normalizedA}%"></div></div>
+                    `;
+                    tr.appendChild(div);
+                });
+            }
+
+            clone.querySelector('.detail-val-1').innerText = data.detail_1 || "Verified";
+            clone.querySelector('.detail-val-2').innerText = data.detail_2 || "Genuine";
+            clone.querySelector('.detail-val-3').innerText = data.detail_3 || "Consistent";
+            clone.querySelector('.detail-val-4').innerText = data.detail_4 || "Clean";
+
+            clone.querySelector('.education-text').innerText = data.education;
+
+            const adviceList = clone.querySelector('.advice-list');
+            if (data.tactical_advice) {
+                data.tactical_advice.forEach((a, i) => {
+                    const li = document.createElement('li');
+                    li.className = "flex gap-8 font-mono text-xl items-start leading-relaxed text-white border-l-4 border-white/20 pl-10";
+                    li.innerHTML = `<span class="text-white/60 font-black text-2xl">>></span> <span>${a}</span>`;
+                    adviceList.appendChild(li);
+                });
+            }
+
+            const btns = clone.querySelector('.action-buttons');
+            const download = document.createElement('button');
+            download.className = "bg-white text-black px-12 py-4 rounded-sm font-black uppercase tracking-[0.3em] text-[12px] hover:bg-blue-600 hover:text-white transition-all shadow-xl";
+            download.innerText = "Export_Forensic_Brief (.txt)";
+            download.onclick = () => {
+                let report = `THREATLENS FORENSIC INTELLIGENCE BRIEF\nSTATUS: ${data.status.toUpperCase()}\nAUTHENTICITY INDEX: ${trust}%\nDIAGNOSTIC: ${data.education}\n\nADVICE:\n${data.tactical_advice ? data.tactical_advice.join('\n') : 'N/A'}`;
+                const blob = new Blob([report], { type: 'text/plain' });
+                const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Forensic_Report.txt'; a.click();
+            };
+            btns.appendChild(download);
+
+            if (trust < 60 || data.status !== 'safe') {
+                const report = document.createElement('a');
+                report.href = "https://cybercrime.gov.in/";
+                report.target = "_blank";
+                report.className = "bg-red-600 text-white px-12 py-4 rounded-sm text-[13px] font-black uppercase tracking-[0.4em] hover:bg-red-700 transition-all shadow-xl flex items-center gap-2";
+                report.innerHTML = `<i data-lucide="shield-alert" class="w-4 h-4"></i> Global_Threat_Registry`;
+                btns.appendChild(report);
+            }
+
+            anchor.appendChild(clone);
+            refreshIcons();
+        }
+
+        window.onload = refreshIcons;
+    </script>
+</body>
+</html>
