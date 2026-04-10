@@ -167,15 +167,6 @@ Riyaan Shaikh
 
 ---
 
-## 🤝 Contributing
-
-We welcome contributions!
-
-- Open an issue  
-- Submit a pull request  
-
----
-
 ## 🔐 Final Note
 
 Trustforge isn’t just a tool—it’s a learning platform for digital awareness.
