@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,8 +10,10 @@
     <!-- Lucide Icons (Fallback) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.447.0/lucide.min.js"></script>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=JetBrains+Mono:wght@400;700;800&display=swap"
+        rel="stylesheet">
+
     <script>
         tailwind.config = {
             theme: {
@@ -45,9 +48,12 @@
 
         .bg-mesh {
             position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             z-index: -1;
-            background: 
+            background:
                 radial-gradient(circle at 0% 0%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
                 radial-gradient(circle at 100% 100%, rgba(16, 185, 129, 0.15) 0%, transparent 50%);
             background-attachment: fixed;
@@ -55,22 +61,25 @@
 
         .bg-grid {
             position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             z-index: -1;
-            background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
             background-size: 40px 40px;
         }
 
         .industrial-panel {
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             background: #000;
             padding: 40px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
 
         .terminal-header {
-            border-left: 2px solid rgba(255,255,255,0.4);
-            border-top: 2px solid rgba(255,255,255,0.4);
+            border-left: 2px solid rgba(255, 255, 255, 0.4);
+            border-top: 2px solid rgba(255, 255, 255, 0.4);
             padding: 6px 16px;
             font-family: 'JetBrains Mono', monospace;
             font-size: 12px;
@@ -142,18 +151,33 @@
             border: 2px solid #333;
         }
 
-        .light-safe.active { background: #10b981; box-shadow: 0 0 30px #10b981; border: none; }
-        .light-suspicious.active { background: #f59e0b; box-shadow: 0 0 30px #f59e0b; border: none; }
-        .light-fraud.active { background: #ef4444; box-shadow: 0 0 30px #ef4444; border: none; }
+        .light-safe.active {
+            background: #10b981;
+            box-shadow: 0 0 30px #10b981;
+            border: none;
+        }
+
+        .light-suspicious.active {
+            background: #f59e0b;
+            box-shadow: 0 0 30px #f59e0b;
+            border: none;
+        }
+
+        .light-fraud.active {
+            background: #ef4444;
+            box-shadow: 0 0 30px #ef4444;
+            border: none;
+        }
 
         .progress-container {
             width: 100%;
             height: 6px;
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 4px;
             overflow: hidden;
             margin: 1.5rem 0;
         }
+
         .progress-fill {
             height: 100%;
             background: #3b82f6;
@@ -171,6 +195,7 @@
             margin: 0 auto;
             overflow: hidden;
         }
+
         .radar::after {
             content: '';
             position: absolute;
@@ -183,27 +208,44 @@
             animation: radarRotate 4s linear infinite;
             opacity: 0.4;
         }
+
         @keyframes radarRotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         .loader {
-            border: 3px solid rgba(255,255,255,0.1);
+            border: 3px solid rgba(255, 255, 255, 0.1);
             border-top: 3px solid currentColor;
             border-radius: 50%;
             width: 20px;
             height: 20px;
             animation: spin 0.8s linear infinite;
         }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
 
         .reveal {
             opacity: 0;
             transform: translateY(20px);
             animation: revealUp 0.6s ease-out forwards;
         }
-        @keyframes revealUp { to { opacity: 1; transform: translateY(0); } }
+
+        @keyframes revealUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
         .nav-link {
             font-family: 'JetBrains Mono', monospace;
@@ -214,7 +256,10 @@
             transition: all 0.3s ease;
             font-weight: 700;
         }
-        .nav-link:hover { color: #3b82f6; }
+
+        .nav-link:hover {
+            color: #3b82f6;
+        }
 
         .meta-tag {
             font-family: 'JetBrains Mono', monospace;
@@ -226,6 +271,7 @@
         }
     </style>
 </head>
+
 <body class="font-display">
 
     <div class="bg-mesh"></div>
@@ -233,12 +279,13 @@
     <div id="message-container"></div>
 
     <!-- Navigation Header -->
-    <nav id="main-nav" class="flex items-center justify-between px-10 py-8 bg-black/60 backdrop-blur-xl border-b border-white/20 sticky top-0 z-50">
+    <nav id="main-nav"
+        class="flex items-center justify-between px-10 py-8 bg-black/60 backdrop-blur-xl border-b border-white/20 sticky top-0 z-50">
         <div class="flex flex-col gap-1 cursor-pointer group" onclick="showView('home')">
             <span class="meta-tag text-[10px] !text-white/60">PROJECT_INCUBATOR</span>
             <span class="text-3xl font-black tracking-tighter text-white uppercase italic">Threatlens</span>
         </div>
-        
+
         <div class="hidden lg:flex gap-16">
             <button onclick="showView('home')" class="nav-link">Core_Engine</button>
             <a href="#about" class="nav-link">About_Us</a>
@@ -247,10 +294,11 @@
         </div>
 
         <div class="hidden lg:flex items-center gap-10">
-             <span class="meta-tag !text-blue-400 font-black text-[10px]">SYSTEM_SECURE</span>
-             <button class="bg-white text-black px-8 py-3 rounded-sm text-[12px] font-black tracking-[0.3em] hover:bg-blue-600 hover:text-white transition-all uppercase shadow-lg shadow-white/5">
-                 Execute
-             </button>
+            <span class="meta-tag !text-blue-400 font-black text-[10px]">SYSTEM_SECURE</span>
+            <button
+                class="bg-white text-black px-8 py-3 rounded-sm text-[12px] font-black tracking-[0.3em] hover:bg-blue-600 hover:text-white transition-all uppercase shadow-lg shadow-white/5">
+                Execute
+            </button>
         </div>
     </nav>
 
@@ -258,14 +306,19 @@
         <!-- Landing View -->
         <div id="view-home">
             <section class="pt-32 pb-24 px-6 text-center">
-                <div class="inline-flex items-center gap-2 bg-white/20 border border-white/30 text-white px-6 py-2 rounded-sm text-[12px] font-black tracking-[0.4em] uppercase mb-10 reveal">
+                <div
+                    class="inline-flex items-center gap-2 bg-white/20 border border-white/30 text-white px-6 py-2 rounded-sm text-[12px] font-black tracking-[0.4em] uppercase mb-10 reveal">
                     Neural Core Protocol: Active
                 </div>
-                <h1 class="text-4xl md:text-6xl font-black tracking-tighter mb-8 max-w-6xl mx-auto leading-tight reveal uppercase italic text-white">
-                    Unmasking <span class="text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-white/60">Digital Deception.</span>
+                <h1
+                    class="text-4xl md:text-6xl font-black tracking-tighter mb-8 max-w-6xl mx-auto leading-tight reveal uppercase italic text-white">
+                    Unmasking <span
+                        class="text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-white/60">Digital
+                        Deception.</span>
                 </h1>
                 <p class="text-xl text-slate-100 max-w-3xl mx-auto mb-16 font-light leading-relaxed reveal">
-                    Advanced forensic auditing for the modern web. We provide grounded neural verification with absolute transparency.
+                    Advanced forensic auditing for the modern web. We provide grounded neural verification with absolute
+                    transparency.
                 </p>
             </section>
 
@@ -274,11 +327,18 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-24 items-start">
                     <div class="reveal">
                         <span class="meta-tag !text-blue-500 mb-8 block font-black">STATION_MISSION</span>
-                        <h2 class="text-6xl font-black tracking-tighter italic uppercase text-white mb-10 leading-none">The Neural Barrier <br>Against Fraud.</h2>
+                        <h2 class="text-6xl font-black tracking-tighter italic uppercase text-white mb-10 leading-none">
+                            The Neural Barrier <br>Against Fraud.</h2>
                         <div class="space-y-8 text-slate-100 text-lg leading-relaxed font-light">
-                            <p>Threatlens is an advanced digital defense nexus. In an era of pervasive synthetic media and sophisticated social engineering, our mission is to provide an impenetrable layer of communication verification.</p>
-                            <p>We believe that in the age of "Post-Truth," automation must be met with even more intelligent verification. Threatlens utilizes state-of-the-art neural heuristics to dismantle deceptions hidden within emails, malicious URLs, and viral misinformation.</p>
-                            <p class="text-white leading-relaxed font-bold italic text-xl border-l-4 border-blue-600 pl-8">We show the "Forensic Trail" that informs every AI verdict.</p>
+                            <p>Threatlens is an advanced digital defense nexus. In an era of pervasive synthetic media
+                                and sophisticated social engineering, our mission is to provide an impenetrable layer of
+                                communication verification.</p>
+                            <p>We believe that in the age of "Post-Truth," automation must be met with even more
+                                intelligent verification. Threatlens utilizes state-of-the-art neural heuristics to
+                                dismantle deceptions hidden within emails, malicious URLs, and viral misinformation.</p>
+                            <p
+                                class="text-white leading-relaxed font-bold italic text-xl border-l-4 border-blue-600 pl-8">
+                                We show the "Forensic Trail" that informs every AI verdict.</p>
                         </div>
                     </div>
                     <div class="grid grid-cols-1 gap-6 reveal">
@@ -287,28 +347,39 @@
                                 <div class="flex gap-10 items-start">
                                     <span class="meta-tag !text-white mt-1 text-lg font-black italic">01</span>
                                     <div>
-                                        <h4 class="text-white font-black uppercase tracking-widest text-sm mb-3">Neural Forensic Hub</h4>
-                                        <p class="text-white text-xs font-mono uppercase tracking-widest leading-loose text-white/40">Cross-platform heuristic analysis across communication streams.</p>
+                                        <h4 class="text-white font-black uppercase tracking-widest text-sm mb-3">Neural
+                                            Forensic Hub</h4>
+                                        <p
+                                            class="text-white text-xs font-mono uppercase tracking-widest leading-loose text-white/40">
+                                            Cross-platform heuristic analysis across communication streams.</p>
                                     </div>
                                 </div>
                                 <div class="flex gap-10 items-start">
                                     <span class="meta-tag !text-white mt-1 text-lg font-black italic">02</span>
                                     <div>
-                                        <h4 class="text-white font-black uppercase tracking-widest text-sm mb-3">Explainable Intelligence</h4>
-                                        <p class="text-white text-xs font-mono uppercase tracking-widest leading-loose text-white/40">Real-time metadata evidence logs provided for every neural resolution.</p>
+                                        <h4 class="text-white font-black uppercase tracking-widest text-sm mb-3">
+                                            Explainable Intelligence</h4>
+                                        <p
+                                            class="text-white text-xs font-mono uppercase tracking-widest leading-loose text-white/40">
+                                            Real-time metadata evidence logs provided for every neural resolution.</p>
                                     </div>
                                 </div>
                                 <!-- Roadmap Section -->
                                 <div class="pt-10 border-t border-white/10 mt-6">
-                                    <span class="meta-tag !text-orange-500 font-black text-[9px] mb-6 block tracking-[0.4em]">STATION_ROADMAP_2026</span>
+                                    <span
+                                        class="meta-tag !text-orange-500 font-black text-[9px] mb-6 block tracking-[0.4em]">STATION_ROADMAP_2026</span>
                                     <div class="space-y-6">
                                         <div class="flex gap-6 items-center">
                                             <i data-lucide="video" class="w-5 h-5 text-white/40"></i>
-                                            <span class="text-white text-[11px] font-black uppercase tracking-widest">Protocol_06: Video Forensic (Beta)</span>
+                                            <span
+                                                class="text-white text-[11px] font-black uppercase tracking-widest">Protocol_06:
+                                                Video Forensic (Beta)</span>
                                         </div>
                                         <div class="flex gap-6 items-center">
                                             <i data-lucide="mic" class="w-5 h-5 text-white/40"></i>
-                                            <span class="text-white text-[11px] font-black uppercase tracking-widest">Protocol_07: Audio Deepfake Scan</span>
+                                            <span
+                                                class="text-white text-[11px] font-black uppercase tracking-widest">Protocol_07:
+                                                Audio Deepfake Scan</span>
                                         </div>
                                     </div>
                                 </div>
@@ -321,48 +392,96 @@
             <!-- Feature Suite Grid -->
             <section id="features" class="max-w-7xl mx-auto px-6 py-32">
                 <div class="flex flex-wrap justify-center gap-10">
-                    <div onclick="showView('email')" class="glass-card p-12 rounded-sm reveal cursor-pointer group w-full md:w-[calc(50%-20px)] lg:w-[calc(33.33%-27px)]">
+                    <div onclick="showView('email')"
+                        class="glass-card p-12 rounded-sm reveal cursor-pointer group w-full md:w-[calc(50%-20px)] lg:w-[calc(33.33%-27px)]">
                         <div class="module-logo text-blue-400">
-                            <svg xmlns="http://www.w3.org/2008/Math/SVG" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                            <svg xmlns="http://www.w3.org/2008/Math/SVG" width="28" height="28" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-mail">
+                                <rect width="20" height="16" x="2" y="4" rx="2" />
+                                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                            </svg>
                         </div>
-                        <h3 class="text-3xl font-black mb-5 uppercase italic tracking-tighter text-white">Email Forensic</h3>
-                        <p class="text-white text-base leading-relaxed mb-10 font-medium italic text-white/60">Neural diagnostic of communication payloads and signatures.</p>
+                        <h3 class="text-3xl font-black mb-5 uppercase italic tracking-tighter text-white">Email Forensic
+                        </h3>
+                        <p class="text-white text-base leading-relaxed mb-10 font-medium italic text-white/60">Neural
+                            diagnostic of communication payloads and signatures.</p>
                         <div class="meta-tag !text-blue-400 !tracking-widest font-black text-xs">Protocol_01</div>
                     </div>
 
-                    <div onclick="showView('web')" class="glass-card p-12 rounded-sm reveal cursor-pointer group w-full md:w-[calc(50%-20px)] lg:w-[calc(33.33%-27px)]">
+                    <div onclick="showView('web')"
+                        class="glass-card p-12 rounded-sm reveal cursor-pointer group w-full md:w-[calc(50%-20px)] lg:w-[calc(33.33%-27px)]">
                         <div class="module-logo text-emerald-400">
-                            <svg xmlns="http://www.w3.org/2008/Math/SVG" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 0 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg>
+                            <svg xmlns="http://www.w3.org/2008/Math/SVG" width="28" height="28" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-link-2">
+                                <path d="M9 17H7A5 5 0 0 1 7 7h2" />
+                                <path d="M15 7h2a5 5 0 0 1 0 10h-2" />
+                                <line x1="8" x2="16" y1="12" y2="12" />
+                            </svg>
                         </div>
-                        <h3 class="text-3xl font-black mb-5 uppercase italic tracking-tighter text-white">URL Tracer</h3>
-                        <p class="text-white text-base leading-relaxed mb-10 font-medium italic text-white/60">Domain reputation auditing and integrity mapping.</p>
+                        <h3 class="text-3xl font-black mb-5 uppercase italic tracking-tighter text-white">URL Tracer
+                        </h3>
+                        <p class="text-white text-base leading-relaxed mb-10 font-medium italic text-white/60">Domain
+                            reputation auditing and integrity mapping.</p>
                         <div class="meta-tag !text-green-400 !tracking-widest font-black text-xs">Protocol_02</div>
                     </div>
 
-                    <div onclick="showView('social')" class="glass-card p-12 rounded-sm reveal cursor-pointer group w-full md:w-[calc(50%-20px)] lg:w-[calc(33.33%-27px)]">
+                    <div onclick="showView('social')"
+                        class="glass-card p-12 rounded-sm reveal cursor-pointer group w-full md:w-[calc(50%-20px)] lg:w-[calc(33.33%-27px)]">
                         <div class="module-logo text-orange-400">
-                            <svg xmlns="http://www.w3.org/2008/Math/SVG" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-share-2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>
+                            <svg xmlns="http://www.w3.org/2008/Math/SVG" width="28" height="28" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-share-2">
+                                <circle cx="18" cy="5" r="3" />
+                                <circle cx="6" cy="12" r="3" />
+                                <circle cx="18" cy="19" r="3" />
+                                <line x1="8.59" x2="15.42" y1="13.51" y2="17.49" />
+                                <line x1="15.41" x2="8.59" y1="6.51" y2="10.49" />
+                            </svg>
                         </div>
-                        <h3 class="text-3xl font-black mb-5 uppercase italic tracking-tighter text-white">Post Audit</h3>
-                        <p class="text-white text-base leading-relaxed mb-10 font-medium italic text-white/60">Social media verification across Reddit and Meta platforms.</p>
+                        <h3 class="text-3xl font-black mb-5 uppercase italic tracking-tighter text-white">Post Audit
+                        </h3>
+                        <p class="text-white text-base leading-relaxed mb-10 font-medium italic text-white/60">Social
+                            media verification across Reddit and Meta platforms.</p>
                         <div class="meta-tag !text-orange-400 !tracking-widest font-black text-xs">Protocol_03</div>
                     </div>
 
-                    <div onclick="showView('article')" class="glass-card p-12 rounded-sm reveal cursor-pointer group w-full md:w-[calc(50%-20px)] lg:w-[calc(33.33%-27px)]">
+                    <div onclick="showView('article')"
+                        class="glass-card p-12 rounded-sm reveal cursor-pointer group w-full md:w-[calc(50%-20px)] lg:w-[calc(33.33%-27px)]">
                         <div class="module-logo text-red-400">
-                            <svg xmlns="http://www.w3.org/2008/Math/SVG" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-newspaper"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>
+                            <svg xmlns="http://www.w3.org/2008/Math/SVG" width="28" height="28" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-newspaper">
+                                <path
+                                    d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2" />
+                                <path d="M18 14h-8" />
+                                <path d="M15 18h-5" />
+                                <path d="M10 6h8v4h-8V6Z" />
+                            </svg>
                         </div>
-                        <h3 class="text-3xl font-black mb-5 uppercase italic tracking-tighter text-white">Truth Check</h3>
-                        <p class="text-white text-base leading-relaxed mb-10 font-medium italic text-white/60">Article authenticity verification against global archives.</p>
+                        <h3 class="text-3xl font-black mb-5 uppercase italic tracking-tighter text-white">Truth Check
+                        </h3>
+                        <p class="text-white text-base leading-relaxed mb-10 font-medium italic text-white/60">Article
+                            authenticity verification against global archives.</p>
                         <div class="meta-tag !text-red-400 !tracking-widest font-black text-xs">Protocol_04</div>
                     </div>
 
-                    <div onclick="showView('payload')" class="glass-card p-12 rounded-sm reveal cursor-pointer group w-full md:w-[calc(50%-20px)] lg:w-[calc(33.33%-27px)]">
+                    <div onclick="showView('payload')"
+                        class="glass-card p-12 rounded-sm reveal cursor-pointer group w-full md:w-[calc(50%-20px)] lg:w-[calc(33.33%-27px)]">
                         <div class="module-logo text-cyan-400">
-                            <svg xmlns="http://www.w3.org/2008/Math/SVG" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield-alert"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+                            <svg xmlns="http://www.w3.org/2008/Math/SVG" width="28" height="28" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-shield-alert">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
+                                <line x1="12" x2="12" y1="8" y2="12" />
+                                <line x1="12" x2="12.01" y1="16" y2="16" />
+                            </svg>
                         </div>
-                        <h3 class="text-3xl font-black mb-5 uppercase italic tracking-tighter text-white">Payload Sentry</h3>
-                        <p class="text-white text-base leading-relaxed mb-10 font-medium italic text-white/60">Heuristic file audit for hidden malware and code anomalies.</p>
+                        <h3 class="text-3xl font-black mb-5 uppercase italic tracking-tighter text-white">Payload Sentry
+                        </h3>
+                        <p class="text-white text-base leading-relaxed mb-10 font-medium italic text-white/60">Heuristic
+                            file audit for hidden malware and code anomalies.</p>
                         <div class="meta-tag !text-cyan-400 !tracking-widest font-black text-xs">Protocol_05</div>
                     </div>
                 </div>
@@ -373,22 +492,36 @@
                 <div class="max-w-7xl mx-auto flex flex-col gap-20">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-20 items-end">
                         <div class="flex flex-col gap-4 text-left">
-                            <span class="meta-tag !text-white/30 font-black text-[9px] tracking-[0.4em]">STATION_IDENTITY</span>
-                            <span class="font-black text-3xl tracking-tighter uppercase italic text-white leading-none">Trustforge</span>
-                            <p class="text-white/40 text-xs font-mono uppercase tracking-[0.1em] mt-2 max-w-sm leading-relaxed">High-fidelity neural forensic intelligence nexus.</p>
+                            <span
+                                class="meta-tag !text-white/30 font-black text-[9px] tracking-[0.4em]">STATION_IDENTITY</span>
+                            <span
+                                class="font-black text-3xl tracking-tighter uppercase italic text-white leading-none">Trustforge</span>
+                            <p
+                                class="text-white/40 text-xs font-mono uppercase tracking-[0.1em] mt-2 max-w-sm leading-relaxed">
+                                High-fidelity neural forensic intelligence nexus.</p>
                         </div>
                         <div class="flex flex-col gap-8 justify-end">
-                            <span class="meta-tag text-right md:text-left !text-white/30 font-black text-[9px] tracking-[0.4em]">COLLECTIVE_NODES</span>
+                            <span
+                                class="meta-tag text-right md:text-left !text-white/30 font-black text-[9px] tracking-[0.4em]">COLLECTIVE_NODES</span>
                             <div class="grid grid-cols-2 gap-x-12 gap-y-6">
-                                <a href="https://www.linkedin.com/in/talha-chougle-15a063334" target="_blank" class="text-white font-bold text-sm tracking-tight hover:text-blue-400 transition-colors">Talha Chougle</a>
-                                <a href="https://www.linkedin.com/in/md-zaid-chaudhary-a072a0371" target="_blank" class="text-white font-bold text-sm tracking-tight hover:text-blue-400 transition-colors">Zaid Chaudhary</a>
-                                <a href="https://www.linkedin.com/in/shaikh-riyaan-akeelahmed-77859837b" target="_blank" class="text-white font-bold text-sm tracking-tight hover:text-blue-400 transition-colors">Riyaan Shaikh</a>
-                                <a href="https://www.linkedin.com/in/uzair-karedia-61080a348" target="_blank" class="text-white font-bold text-sm tracking-tight hover:text-blue-400 transition-colors">Uzair Karedia</a>
+                                <a href="https://www.linkedin.com/in/talha-chougle-15a063334" target="_blank"
+                                    class="text-white font-bold text-sm tracking-tight hover:text-blue-400 transition-colors">Talha
+                                    Chougle</a>
+                                <a href="https://www.linkedin.com/in/md-zaid-chaudhary-a072a0371" target="_blank"
+                                    class="text-white font-bold text-sm tracking-tight hover:text-blue-400 transition-colors">Zaid
+                                    Chaudhary</a>
+                                <a href="https://www.linkedin.com/in/shaikh-riyaan-akeelahmed-77859837b" target="_blank"
+                                    class="text-white font-bold text-sm tracking-tight hover:text-blue-400 transition-colors">Riyaan
+                                    Shaikh</a>
+                                <a href="https://www.linkedin.com/in/uzair-karedia-61080a348" target="_blank"
+                                    class="text-white font-bold text-sm tracking-tight hover:text-blue-400 transition-colors">Uzair
+                                    Karedia</a>
                             </div>
                         </div>
                     </div>
                     <div class="flex flex-col md:flex-row justify-center items-center pt-8 border-t border-white/5">
-                        <p class="text-white/20 text-[9px] font-mono uppercase tracking-[0.6em] font-black italic">System_Secure_Forensic_Network_2026</p>
+                        <p class="text-white/20 text-[9px] font-mono uppercase tracking-[0.6em] font-black italic">
+                            System_Secure_Forensic_Network_2026</p>
                     </div>
                 </div>
             </footer>
@@ -396,7 +529,8 @@
 
         <div id="module-view" class="hidden min-h-screen pt-12 px-6">
             <div class="max-w-7xl mx-auto">
-                <button onclick="showView('home')" class="mb-12 flex items-center gap-4 text-white hover:text-blue-400 transition-colors group font-black uppercase tracking-widest text-xs">
+                <button onclick="showView('home')"
+                    class="mb-12 flex items-center gap-4 text-white hover:text-blue-400 transition-colors group font-black uppercase tracking-widest text-xs">
                     <span class="meta-tag group-hover:text-blue-400 transition-colors">BACK_TO_CORE_TERMINAL</span>
                 </button>
                 <div id="module-container"></div>
@@ -412,15 +546,17 @@
                 <div class="flex flex-col md:flex-row justify-between gap-12 mt-12">
                     <div class="flex-1">
                         <span class="meta-tag !text-white block mb-6 font-black text-sm">Target_Diagnostic</span>
-                        <h3 class="target-title text-4xl font-black uppercase tracking-tighter italic text-white mb-2"></h3>
+                        <h3 class="target-title text-4xl font-black uppercase tracking-tighter italic text-white mb-2">
+                        </h3>
                         <p class="target-purpose text-slate-400 text-lg mb-10 italic"></p>
                         <div class="flex items-center gap-8">
-                             <div class="inline-block bg-white text-black px-8 py-3 font-mono text-lg font-black uppercase tracking-widest">
+                            <div
+                                class="inline-block bg-white text-black px-8 py-3 font-mono text-lg font-black uppercase tracking-widest">
                                 Trust Index: <span class="trust-score"></span>
-                             </div>
-                             <div class="text-white/60 font-mono font-bold uppercase tracking-widest text-sm">
+                            </div>
+                            <div class="text-white/60 font-mono font-bold uppercase tracking-widest text-sm">
                                 <span class="origin-label">Source:</span> <span class="target-owner text-white"></span>
-                             </div>
+                            </div>
                         </div>
                     </div>
                     <div class="traffic-light-container">
@@ -447,22 +583,31 @@
                 <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-12 font-mono text-white text-lg">
                     <div class="space-y-10">
                         <div>
-                            <span class="meta-tag !text-white/40 block mb-2 font-black detail-label-1">Domain_Authority</span>
-                            <div class="detail-val-1 p-3 bg-white/5 border border-white/10 text-xs font-black uppercase tracking-widest">Verified</div>
+                            <span
+                                class="meta-tag !text-white/40 block mb-2 font-black detail-label-1">Domain_Authority</span>
+                            <div
+                                class="detail-val-1 p-3 bg-white/5 border border-white/10 text-xs font-black uppercase tracking-widest">
+                                Verified</div>
                         </div>
                         <div>
                             <span class="meta-tag !text-white/40 block mb-2 font-black detail-label-2">SSL_Status</span>
-                            <div class="detail-val-2 p-3 bg-white/5 border border-white/10 text-xs font-black uppercase tracking-widest">Secure</div>
+                            <div
+                                class="detail-val-2 p-3 bg-white/5 border border-white/10 text-xs font-black uppercase tracking-widest">
+                                Secure</div>
                         </div>
                     </div>
                     <div class="space-y-10">
                         <div>
                             <span class="meta-tag !text-white/40 block mb-2 font-black detail-label-3">Reputation</span>
-                            <div class="detail-val-3 p-3 bg-white/5 border border-white/10 text-xs font-black uppercase tracking-widest">Good</div>
+                            <div
+                                class="detail-val-3 p-3 bg-white/5 border border-white/10 text-xs font-black uppercase tracking-widest">
+                                Good</div>
                         </div>
                         <div>
                             <span class="meta-tag !text-white/40 block mb-2 font-black detail-label-4">Blacklist</span>
-                            <div class="detail-val-4 p-3 bg-white/5 border border-white/10 text-xs font-black uppercase tracking-widest">Clean</div>
+                            <div
+                                class="detail-val-4 p-3 bg-white/5 border border-white/10 text-xs font-black uppercase tracking-widest">
+                                Clean</div>
                         </div>
                     </div>
                 </div>
@@ -488,8 +633,8 @@
     </template>
 
     <script>
-        const apiKey = "AIzaSyDGNRiwRp0j8ZQxqPAWubFVKtrSck6fgS8";
-        const BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=" + apiKey;
+        const apiKey = "AIzaSyAK9gZ0HgKIqC0WxR8n7UN6ercp6HiP_BU";
+        const BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent";
 
         let currentAuditData = null;
         let activeScanInterval = null;
@@ -521,39 +666,22 @@
         }
 
         async function geminiCall(prompt) {
-            const payload = {
-                contents: [{ parts: [{ text: prompt }] }],
-                generationConfig: {
-                    responseMimeType: "application/json",
-                    responseSchema: {
-                        type: "OBJECT",
-                        properties: {
-                            status: { type: "STRING", enum: ["safe", "suspicious", "fraud"] },
-                            domain_name: { type: "STRING" },
-                            purpose: { type: "STRING" },
-                            trust_index: { type: "NUMBER" },
-                            owner: { type: "STRING" },
-                            tech_audit: { type: "ARRAY", items: { type: "OBJECT", properties: { part: { type: "STRING" }, score: { type: "NUMBER" } } } },
-                            detail_1: { type: "STRING" },
-                            detail_2: { type: "STRING" },
-                            detail_3: { type: "STRING" },
-                            detail_4: { type: "STRING" },
-                            confidence: { type: "NUMBER" },
-                            summary: { type: "STRING" },
-                            education: { type: "STRING" },
-                            tactical_advice: { type: "ARRAY", items: { type: "STRING" } }
-                        },
-                        required: ["status", "trust_index", "summary", "education", "tactical_advice"]
-                    }
-                }
-            };
+            const payload = { contents: [{ parts: [{ text: prompt }] }] };
             const response = await fetch(BASE_URL, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'X-goog-api-key': apiKey },
                 body: JSON.stringify(payload)
             });
             const data = await response.json();
-            return JSON.parse(data.candidates[0].content.parts[0].text);
+            let text = data.candidates[0].content.parts[0].text;
+            text = text.replace(/```json|```/g, '').trim();
+            const parsed = JSON.parse(text);
+            // Flatten: if response is nested under any key, unwrap it
+            const keys = Object.keys(parsed);
+            if (keys.length === 1 && typeof parsed[keys[0]] === 'object') {
+                return parsed[keys[0]];
+            }
+            return parsed;
         }
 
         function showView(viewName) {
@@ -561,7 +689,7 @@
             const module = document.getElementById('module-view');
             const nav = document.getElementById('main-nav');
             const container = document.getElementById('module-container');
-            
+
             if (viewName === 'home') {
                 home.classList.remove('hidden');
                 module.classList.add('hidden');
@@ -569,7 +697,7 @@
             } else {
                 home.classList.add('hidden');
                 module.classList.remove('hidden');
-                nav.classList.add('hidden'); 
+                nav.classList.add('hidden');
                 renderModule(viewName, container);
             }
             window.scrollTo(0, 0);
@@ -688,16 +816,16 @@
         async function handleScan(type) {
             const inputElement = document.getElementById('scan-input');
             const input = inputElement ? inputElement.value : 'FILE_UPLOAD';
-            
+
             const terminal = document.getElementById('audit-terminal');
             const anchor = document.getElementById('result-anchor');
             const btn = document.getElementById('scan-btn');
             const abortBtn = document.getElementById('abort-btn');
-            
+
             anchor.innerHTML = '';
             terminal.classList.remove('hidden');
             abortBtn.classList.remove('hidden');
-            
+
             window.scrollTo({ top: 0, behavior: 'smooth' });
 
             btn.disabled = true;
@@ -717,25 +845,130 @@
 
             try {
                 let prompt = "";
+
                 if (type === 'web') {
-                    prompt = `Forensic URL scan: ${input}. JSON. Domain info, trust index (0-100), owner, tech audit array, domain auth, ssl, reputation, blacklist. Education: explain why. Confidence 0-100. IMPORTANT: RETURN ALL SCORES AS NUMBERS BETWEEN 0 AND 100.`;
+                    prompt = `You are a forensic URL security analyst. Analyze this URL or domain: "${input}".
+Respond ONLY with a valid JSON object (no markdown, no backticks) with EXACTLY these fields:
+{
+  "domain_name": "the domain being analyzed",
+  "purpose": "one line summary of what this site is",
+  "status": "safe" or "suspicious" or "fraud",
+  "trust_index": number 0-100,
+  "owner": "organization or registrant name",
+  "confidence": number 0-100,
+  "tech_audit": [
+    {"part": "Domain Authority", "score": 0-100},
+    {"part": "SSL Certificate", "score": 0-100},
+    {"part": "Threat Intelligence", "score": 0-100}
+  ],
+  "detail_1": "domain authority verdict",
+  "detail_2": "SSL certificate status",
+  "detail_3": "reputation verdict",
+  "detail_4": "blacklist status",
+  "education": "forensic explanation of why this verdict was given",
+  "tactical_advice": ["advice step 1", "advice step 2", "advice step 3"]
+}`;
+
                 } else if (type === 'social') {
-                    prompt = `Forensic social media post scan: ${input}. JSON. trust_index (AUTHENTICITY: 80-100 human, 0-40 AI), tech_audit (Synthetic Integrity, Temporal Consistency, Geo-Authenticity scores). Detail fields: AI Status, Region, Age, Metadata. Education: explain why. Confidence 0-100. IMPORTANT: RETURN ALL SCORES AS NUMBERS BETWEEN 0 AND 100.`;
+                    prompt = `You are a forensic social media analyst. Analyze this post or link: "${input}".
+Respond ONLY with a valid JSON object (no markdown, no backticks) with EXACTLY these fields:
+{
+  "domain_name": "platform name or post title",
+  "purpose": "one line summary of what this post is about",
+  "status": "safe" or "suspicious" or "fraud",
+  "trust_index": number 0-100 (80-100 if clearly human, 0-40 if AI-generated),
+  "owner": "poster username or account name",
+  "confidence": number 0-100,
+  "tech_audit": [
+    {"part": "Synthetic Integrity", "score": 0-100},
+    {"part": "Temporal Consistency", "score": 0-100},
+    {"part": "Geo-Authenticity", "score": 0-100}
+  ],
+  "detail_1": "AI generation status verdict",
+  "detail_2": "region of origin",
+  "detail_3": "post temporal age",
+  "detail_4": "metadata integrity verdict",
+  "education": "forensic explanation of why this verdict was given",
+  "tactical_advice": ["advice step 1", "advice step 2", "advice step 3"]
+}`;
+
                 } else if (type === 'article') {
-                    prompt = `Forensic article scan: ${input}. JSON. trust_index (AUTHENTICITY score), tech_audit (Linguistic, Global Match, Integrity scores). Detail fields: Writing Signature, Source Originality, Author, Global Match. Education: explain why. Confidence 0-100. IMPORTANT: RETURN ALL SCORES AS NUMBERS BETWEEN 0 AND 100.`;
+                    prompt = `You are a forensic journalism analyst. Analyze this article text: "${input}".
+Respond ONLY with a valid JSON object (no markdown, no backticks) with EXACTLY these fields:
+{
+  "domain_name": "article headline or publication name",
+  "purpose": "one line summary of what this article claims",
+  "status": "safe" or "suspicious" or "fraud",
+  "trust_index": number 0-100,
+  "owner": "author name or publication",
+  "confidence": number 0-100,
+  "tech_audit": [
+    {"part": "Linguistic Integrity", "score": 0-100},
+    {"part": "Global Archive Match", "score": 0-100},
+    {"part": "Source Integrity", "score": 0-100}
+  ],
+  "detail_1": "writing signature verdict",
+  "detail_2": "source originality verdict",
+  "detail_3": "author attribution verdict",
+  "detail_4": "global index match verdict",
+  "education": "forensic explanation of why this verdict was given",
+  "tactical_advice": ["advice step 1", "advice step 2", "advice step 3"]
+}`;
+
                 } else if (type === 'payload') {
-                    prompt = `Forensic file scan. JSON. status (safe/suspicious/fraud), trust_index (SAFETY score), tech_audit (Malware, Binary, Impact scores). detail fields: Static Analysis, Binary Signature, Entropy Risk, Heuristic Score. Confidence 0-100. IMPORTANT: RETURN ALL SCORES AS NUMBERS BETWEEN 0 AND 100.`;
+                    prompt = `You are a forensic malware analyst. Analyze this file upload scenario: "${input}".
+Respond ONLY with a valid JSON object (no markdown, no backticks) with EXACTLY these fields:
+{
+  "domain_name": "filename being analyzed",
+  "purpose": "one line summary of what this file appears to be",
+  "status": "safe" or "suspicious" or "fraud",
+  "trust_index": number 0-100,
+  "owner": "apparent publisher or signee",
+  "confidence": number 0-100,
+  "tech_audit": [
+    {"part": "Malware Signature", "score": 0-100},
+    {"part": "Binary Integrity", "score": 0-100},
+    {"part": "Impact Risk", "score": 0-100}
+  ],
+  "detail_1": "static analysis verdict",
+  "detail_2": "binary signature verdict",
+  "detail_3": "entropy risk verdict",
+  "detail_4": "heuristic score verdict",
+  "education": "forensic explanation of why this verdict was given",
+  "tactical_advice": ["advice step 1", "advice step 2", "advice step 3"]
+}`;
+
                 } else {
-                    prompt = `Forensic email scan: ${input}. JSON. verdict, confidence (0-100), education, safety steps. IMPORTANT: RETURN ALL SCORES AS NUMBERS BETWEEN 0 AND 100.`;
+                    prompt = `You are a forensic email security analyst. Analyze this email: "${input}".
+Respond ONLY with a valid JSON object (no markdown, no backticks) with EXACTLY these fields:
+{
+  "domain_name": "sender domain or email subject",
+  "purpose": "one line summary of what this email is",
+  "status": "safe" or "suspicious" or "fraud",
+  "trust_index": number 0-100,
+  "owner": "sender name or organization",
+  "confidence": number 0-100,
+  "tech_audit": [
+    {"part": "Header Integrity", "score": 0-100},
+    {"part": "Link Safety", "score": 0-100},
+    {"part": "Sender Reputation", "score": 0-100}
+  ],
+  "detail_1": "SPF/DKIM status verdict",
+  "detail_2": "SSL status of links",
+  "detail_3": "sender reputation verdict",
+  "detail_4": "blacklist status verdict",
+  "education": "forensic explanation of why this verdict was given",
+  "tactical_advice": ["advice step 1", "advice step 2", "advice step 3"]
+}`;
                 }
-                
+
                 const result = await geminiCall(prompt);
                 currentAuditData = result;
-                
+
                 clearInterval(activeScanInterval);
                 bar.style.width = '100%';
                 val.innerText = '100%';
-                
+
                 setTimeout(() => {
                     terminal.classList.add('hidden');
                     abortBtn.classList.add('hidden');
@@ -745,7 +978,9 @@
                     showMessage('AUDIT_SEQUENCE_RESOLVED');
                     document.getElementById('result-anchor').scrollIntoView({ behavior: 'smooth' });
                 }, 800);
+
             } catch (err) {
+                console.error(err);
                 if (activeScanInterval) clearInterval(activeScanInterval);
                 terminal.classList.add('hidden');
                 abortBtn.classList.add('hidden');
@@ -759,7 +994,7 @@
             const anchor = document.getElementById('result-anchor');
             const temp = document.getElementById('result-template');
             const clone = temp.content.cloneNode(true);
-            
+
             // Normalize all scores using helper function
             const conf = normalizeScore(data.confidence || 0);
             const trust = normalizeScore(data.trust_index || (data.status === 'safe' ? 95 : 20));
@@ -854,4 +1089,5 @@
         window.onload = refreshIcons;
     </script>
 </body>
+
 </html>
