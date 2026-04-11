@@ -488,9 +488,9 @@
     </template>
 
     <script>
-        let apiKey = localStorage.getItem('threatlens_key') || prompt('Enter your Gemini API Key:');
-        if (apiKey) localStorage.setItem('threatlens_key', apiKey);
-        const BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=" + apiKey;
+        const apiKey = "AIzaSyDGNRiwRp0j8ZQxqPAWubFVKtrSck6fgS8";
+        const BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=" + apiKey;
+
         let currentAuditData = null;
         let activeScanInterval = null;
 
