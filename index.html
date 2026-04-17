@@ -1,857 +1,1126 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Threatlens - AI Security Verification</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Icons (Fallback) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.447.0/lucide.min.js"></script>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        display: ['Bricolage Grotesque', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace'],
-                    },
-                    colors: {
-                        cyber: {
-                            black: '#050505',
-                            dark: '#0e0e12',
-                            blue: '#3b82f6',
-                            green: '#10b981',
-                            red: '#ef4444',
-                            orange: '#f59e0b',
-                            slate: '#1e293b'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ThreatLens — Unmasking Digital Deception</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0d12;--bg2:#0e1219;--bg3:#111620;--bg4:#161c28;--bg5:#1b2236;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);--border3:rgba(255,255,255,0.2);
+  --text:#f0f2f8;--text2:#7a8296;--text3:#3e4558;
+  --blue:#3b8cf5;--blue2:#1a6edb;--cyan:#00d4ff;--orange:#f59e0b;
+  --red:#ef4444;--green:#22c55e;--pink:#ec4899;--purple:#a855f7;--teal:#14b8a6;
+}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Noto Sans,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.6;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;top:0;right:0;width:55%;height:100vh;background:radial-gradient(ellipse at 80% 20%,rgba(0,30,15,0.55) 0%,transparent 70%);pointer-events:none;z-index:0}
+.z1{position:relative;z-index:1}
+.screen{display:none}.screen.active{display:block}
 
-    <style>
-        body {
-            background-color: #050505;
-            color: #ffffff;
-            overflow-x: hidden;
-            scroll-behavior: smooth;
-        }
+/* NAV */
+nav{display:flex;align-items:center;justify-content:space-between;padding:13px 32px;border-bottom:1px solid var(--border);background:rgba(10,13,18,0.95);backdrop-filter:blur(14px);position:sticky;top:0;z-index:300;flex-wrap:wrap;gap:8px}
+.nav-brand{display:flex;align-items:center;gap:10px;cursor:pointer}
+.nav-logo{width:32px;height:32px;border-radius:7px;background:var(--blue2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.nav-logo svg{width:17px;height:17px;stroke:#fff;fill:none;stroke-width:2.3}
+.nav-name{font-size:16px;font-weight:800;letter-spacing:-.2px;color:var(--text)}
+.nav-name span{color:var(--blue)}
+.nav-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.status-badge{display:flex;align-items:center;gap:7px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text);background:var(--bg3);border:1px solid var(--border2);padding:6px 12px;border-radius:4px}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:blink 2s infinite;flex-shrink:0}
+@keyframes blink{0%,100%{opacity:1;box-shadow:0 0 6px var(--cyan)}50%{opacity:.4;box-shadow:none}}
+.back-btn{display:none;align-items:center;gap:6px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text2);background:transparent;border:1px solid var(--border2);padding:7px 12px;border-radius:4px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.back-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2}
+.back-btn:hover{color:var(--text);border-color:var(--border3)}
+.back-btn.show{display:flex}
 
-        .bg-mesh {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            z-index: -1;
-            background: 
-                radial-gradient(circle at 0% 0%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 100% 100%, rgba(16, 185, 129, 0.15) 0%, transparent 50%);
-            background-attachment: fixed;
-        }
+/* LANG SELECTOR */
+.lang-select-wrap{position:relative}
+.lang-btn{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.05em;color:var(--text2);background:var(--bg3);border:1px solid var(--border2);padding:6px 11px;border-radius:4px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.lang-btn svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2}
+.lang-btn:hover{border-color:var(--border3);color:var(--text)}
+.lang-flag{font-size:14px;line-height:1}
+.lang-dropdown{
+  position:fixed;
+  top:56px;right:16px;
+  background:#0e1219 !important;
+  opacity:1 !important;
+  border:1px solid rgba(255,255,255,0.18);
+  border-radius:8px;
+  padding:5px;width:230px;
+  z-index:10000;
+  display:none;flex-direction:column;gap:1px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.98),0 0 0 1px #000;
+  max-height:calc(100vh - 80px);
+  overflow-y:auto;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(255,255,255,0.1) transparent;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  transform:translateZ(0);
+}
+.lang-dropdown::-webkit-scrollbar{width:4px}
+.lang-dropdown::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.12);border-radius:2px}
+.lang-dropdown.open{display:flex}
+.lang-backdrop{
+  display:none;position:fixed;inset:0;z-index:9999;
+  background:rgba(0,0,0,0.55);
+}
+.lang-backdrop.open{display:block}
+.lang-opt{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:5px;cursor:pointer;transition:background .12s;flex-shrink:0}
+.lang-opt:hover{background:var(--bg4)}
+.lang-opt.active{background:rgba(59,140,245,0.12);color:var(--blue)}
+.lang-opt-flag{font-size:17px;line-height:1;flex-shrink:0;width:22px;text-align:center}
+.lang-opt-name{font-size:13px;font-weight:600;color:inherit;flex:1}
+.lang-opt-native{font-size:11px;color:var(--text3);white-space:nowrap}
 
-        .bg-grid {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            z-index: -1;
-            background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-            background-size: 40px 40px;
-        }
+/* HOME */
+.hero{text-align:center;padding:72px 32px 56px;max-width:900px;margin:0 auto}
+.hero-tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text2);background:var(--bg3);border:1px solid var(--border2);padding:7px 18px;border-radius:3px;margin-bottom:26px}
+.hero h1{font-size:clamp(36px,6vw,72px);font-weight:900;font-style:italic;letter-spacing:-1px;line-height:1.0;color:var(--text);text-transform:uppercase;margin-bottom:18px}
+.hero h1 .accent{color:#c8cfe0}
+.hero-sub{font-size:15px;color:var(--text2);line-height:1.75;max-width:540px;margin:0 auto 32px}
+.hero-stats{display:flex;justify-content:center;gap:40px;flex-wrap:wrap;margin-bottom:40px}
+.stat{text-align:center}
+.stat-n{font-size:26px;font-weight:900;color:var(--text);font-style:italic}
+.stat-l{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-top:3px}
+.test-data-btn{display:inline-flex;align-items:center;gap:10px;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--orange);background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.35);padding:12px 26px;border-radius:4px;cursor:pointer;transition:all .2s}
+.test-data-btn svg{width:15px;height:15px;stroke:var(--orange);fill:none;stroke-width:2}
+.test-data-btn:hover{background:rgba(245,158,11,0.14);border-color:rgba(245,158,11,.6)}
 
-        .industrial-panel {
-            border: 1px solid rgba(255,255,255,0.2);
-            background: #000;
-            padding: 40px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        }
+.mission{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+@media(max-width:860px){.mission{grid-template-columns:1fr}}
+.mission-left{padding:56px 44px;border-right:1px solid var(--border)}
+.mission-right{padding:44px}
+.section-tag{font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--blue);margin-bottom:18px;display:block}
+.mission-left h2{font-size:clamp(28px,4vw,48px);font-weight:900;font-style:italic;text-transform:uppercase;line-height:1.05;margin-bottom:22px;color:var(--text)}
+.mission-left p{font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:14px}
+.mission-quote{border-left:3px solid var(--blue);padding-left:16px;margin-top:22px}
+.mission-quote p{font-size:15px;font-weight:700;font-style:italic;color:var(--text)}
+.feature-list{display:flex;flex-direction:column;gap:0}
+.feature-item{display:flex;align-items:flex-start;gap:18px;padding:18px 0;border-bottom:1px solid var(--border)}
+.feature-item:first-child{padding-top:0}
+.feature-item:last-child{border-bottom:none}
+.feat-num{font-size:14px;font-weight:900;font-style:italic;color:var(--text3);min-width:26px;padding-top:1px}
+.feat-title{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--text);margin-bottom:4px}
+.feat-desc{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--text3);line-height:1.5}
 
-        .terminal-header {
-            border-left: 2px solid rgba(255,255,255,0.4);
-            border-top: 2px solid rgba(255,255,255,0.4);
-            padding: 6px 16px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.3em;
-            color: #ffffff;
-            display: inline-block;
-            margin-bottom: -1px;
-            font-weight: 800;
-        }
+.modules-section{padding:56px 32px}
+.modules-label{font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--blue);margin-bottom:32px;display:block;text-align:center}
+.mod-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:1100px;margin:0 auto}
+@media(max-width:900px){.mod-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:540px){.mod-grid{grid-template-columns:1fr}}
+.mod-card{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:26px 22px;cursor:pointer;transition:border-color .2s,transform .2s,background .2s;position:relative;overflow:hidden}
+.mod-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.02) 0%,transparent 60%);pointer-events:none}
+.mod-card:hover{border-color:var(--border3);background:var(--bg4);transform:translateY(-2px)}
+.mod-card:hover .card-arrow{opacity:1}
+.card-arrow{position:absolute;top:20px;right:20px;opacity:0;transition:opacity .2s;font-size:18px;color:var(--border3)}
+.mod-card-icon{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:18px}
+.mod-card-icon svg{width:19px;height:19px;fill:none;stroke-width:1.8}
+.mod-card-title{font-size:16px;font-weight:900;font-style:italic;text-transform:uppercase;letter-spacing:-.3px;color:var(--text);margin-bottom:7px;line-height:1.1}
+.mod-card-desc{font-size:12px;font-style:italic;color:var(--text2);line-height:1.55;margin-bottom:18px}
+.mod-card-proto{font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
 
-        /* Enhanced Protocol Cards */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.04);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
+.ic-blue{background:rgba(59,140,245,.12);border:1px solid rgba(59,140,245,.2)}.ic-blue svg{stroke:#3b8cf5}
+.ic-cyan{background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.18)}.ic-cyan svg{stroke:#00d4ff}
+.ic-orange{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.18)}.ic-orange svg{stroke:#f59e0b}
+.ic-red{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.18)}.ic-red svg{stroke:#ef4444}
+.ic-green{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.18)}.ic-green svg{stroke:#22c55e}
+.ic-pink{background:rgba(236,72,153,.1);border:1px solid rgba(236,72,153,.18)}.ic-pink svg{stroke:#ec4899}
+.ic-purple{background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.18)}.ic-purple svg{stroke:#a855f7}
+.ic-teal{background:rgba(20,184,166,.1);border:1px solid rgba(20,184,166,.18)}.ic-teal svg{stroke:#14b8a6}
+.pc-blue{color:#3b8cf5}.pc-cyan{color:#00d4ff}.pc-orange{color:#f59e0b}.pc-red{color:#ef4444}
+.pc-green{color:#22c55e}.pc-pink{color:#ec4899}.pc-purple{color:#a855f7}.pc-teal{color:#14b8a6}
 
-        .glass-card:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(59, 130, 246, 0.6);
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px -15px rgba(59, 130, 246, 0.3);
-        }
+footer{border-top:1px solid var(--border);padding:20px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+footer p{font-size:12px;color:var(--text3)}
+.team-row{display:flex;gap:6px;flex-wrap:wrap}
+.team-chip{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:4px 9px;background:var(--bg3);border:1px solid var(--border);border-radius:3px;color:var(--text3)}
 
-        .module-logo {
-            width: 58px;
-            height: 58px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(0, 0, 0, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            margin-bottom: 2.5rem;
-            transition: all 0.4s ease;
-            position: relative;
-            z-index: 10;
-        }
+/* TEST SCREEN */
+.test-wrap{max-width:900px;margin:0 auto;padding:44px 32px 80px}
+.test-screen-tag{font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--orange);margin-bottom:12px;display:block}
+.test-screen-hdr h2{font-size:clamp(24px,4vw,38px);font-weight:900;font-style:italic;text-transform:uppercase;letter-spacing:-.5px;color:var(--text);margin-bottom:10px}
+.test-screen-hdr p{font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:28px}
+.test-mod-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:760px){.test-mod-grid{grid-template-columns:repeat(2,1fr)}}
+.test-mod-pill{display:flex;flex-direction:column;align-items:flex-start;gap:7px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:14px 13px;cursor:pointer;transition:all .18s}
+.test-mod-pill:hover{border-color:var(--border3);background:var(--bg4);transform:translateY(-1px)}
+.test-mod-pill.selected{border-color:var(--orange);background:rgba(245,158,11,0.06)}
+.tmp-icon{width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tmp-icon svg{width:16px;height:16px;fill:none;stroke-width:1.8}
+.tmp-name{font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--text);line-height:1.3}
+.tmp-proto{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase}
+.usecases-panel{display:none;margin-top:26px}.usecases-panel.show{display:block}
+.uc-hdr{display:flex;align-items:center;gap:13px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:14px 18px;margin-bottom:14px}
+.uc-hdr-icon{width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.uc-hdr-icon svg{width:18px;height:18px;fill:none;stroke-width:1.8}
+.uc-hdr-text h3{font-size:14px;font-weight:800;font-style:italic;text-transform:uppercase;color:var(--text);margin-bottom:2px}
+.uc-hdr-text p{font-size:12px;color:var(--text2)}
+.uc-list{display:flex;flex-direction:column;gap:9px}
+.uc-card{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:18px 20px;cursor:pointer;transition:all .18s;display:flex;align-items:flex-start;gap:14px}
+.uc-card:hover{border-color:var(--border2);background:var(--bg4);transform:translateX(3px)}
+.uc-num{font-size:11px;font-weight:900;font-style:italic;color:var(--text3);min-width:20px;padding-top:1px;flex-shrink:0}
+.uc-body{flex:1;min-width:0}
+.uc-title{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--text);margin-bottom:5px}
+.uc-preview{font-size:12px;color:var(--text2);line-height:1.5;font-family:monospace;white-space:pre-wrap;word-break:break-word}
+.uc-load-btn{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--orange);border:1px solid rgba(245,158,11,0.3);background:rgba(245,158,11,0.06);padding:5px 11px;border-radius:3px;transition:all .15s;flex-shrink:0;white-space:nowrap}
+.uc-load-btn svg{width:11px;height:11px;stroke:var(--orange);fill:none;stroke-width:2.2}
+.uc-card:hover .uc-load-btn{background:rgba(245,158,11,0.12);border-color:rgba(245,158,11,.5)}
 
-        .glass-card:hover .module-logo {
-            border-color: rgba(59, 130, 246, 0.8);
-            box-shadow: 0 0 25px rgba(59, 130, 246, 0.5);
-            transform: scale(1.05);
-        }
+/* ANALYZE SCREEN */
+.analyze-wrap{max-width:840px;margin:0 auto;padding:32px 32px 80px}
+@media(max-width:600px){.analyze-wrap{padding:20px 16px 60px}}
+.analyze-mod-hdr{display:flex;align-items:center;gap:14px;border-bottom:1px solid var(--border);padding-bottom:20px;margin-bottom:24px}
+.amh-icon{width:48px;height:48px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.amh-icon svg{width:22px;height:22px;fill:none;stroke-width:1.8}
+.amh-proto{font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;margin-bottom:3px}
+.amh-title{font-size:21px;font-weight:900;font-style:italic;text-transform:uppercase;letter-spacing:-.3px;color:var(--text);line-height:1}
 
-        .traffic-light {
-            width: 68px;
-            background: #000;
-            border: 2px solid #333;
-            padding: 16px;
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
+/* API MODE NOTICE */
+.api-notice{
+  display:flex;align-items:flex-start;gap:10px;padding:12px 14px;
+  background:rgba(59,140,245,0.07);border:1px solid rgba(59,140,245,0.2);
+  border-radius:4px;margin-bottom:14px;font-size:12px;color:var(--text2);line-height:1.6;
+}
+.api-notice svg{width:14px;height:14px;stroke:var(--blue);fill:none;stroke-width:2;flex-shrink:0;margin-top:1px}
 
-        .light-bulb {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: #111;
-            border: 2px solid #333;
-        }
+.input-card{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:22px;margin-bottom:14px}
+.input-tabs{display:flex;gap:5px;margin-bottom:18px;flex-wrap:wrap}
+.itab{display:flex;align-items:center;gap:6px;padding:7px 12px;border:1px solid var(--border2);border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text2);background:transparent;cursor:pointer;transition:all .15s;white-space:nowrap}
+.itab svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2}
+.itab:hover{border-color:var(--border3);color:var(--text)}
+.itab.active{background:var(--blue2);border-color:var(--blue2);color:#fff}
+.input-zone{display:none}.input-zone.active{display:block}
+textarea,.url-input{width:100%;background:var(--bg4);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-size:13px;font-family:inherit;line-height:1.7;padding:12px 14px;outline:none;resize:vertical;transition:border-color .18s,box-shadow .18s}
+textarea{min-height:130px}
+textarea:focus,.url-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(59,140,245,.12)}
+::placeholder{color:var(--text3)}
+.file-drop-area{border:1px dashed var(--border2);border-radius:6px;padding:32px 20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg4);position:relative}
+.file-drop-area:hover,.file-drop-area.dragover{border-color:var(--blue);background:rgba(59,140,245,0.05)}
+.file-drop-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.fda-icon{font-size:26px;margin-bottom:8px}
+.fda-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px}
+.fda-sub{font-size:12px;color:var(--text3)}
+.fda-types{display:flex;justify-content:center;gap:5px;flex-wrap:wrap;margin-top:10px}
+.fda-type{font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:3px 7px;background:var(--bg3);border:1px solid var(--border2);border-radius:3px;color:var(--text3)}
+.file-loaded{display:none;align-items:center;gap:10px;padding:11px 13px;background:rgba(34,197,94,0.07);border:1px solid rgba(34,197,94,0.25);border-radius:4px;margin-top:10px}
+.file-loaded.show{display:flex}
+.fl-icon{width:30px;height:30px;border-radius:6px;background:rgba(34,197,94,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.fl-icon svg{width:15px;height:15px;stroke:#22c55e;fill:none;stroke-width:2}
+.fl-name{font-size:13px;font-weight:600;color:var(--green);flex:1;word-break:break-all}
+.fl-size{font-size:11px;color:var(--text3);white-space:nowrap}
+.fl-remove{font-size:18px;color:var(--text3);cursor:pointer;padding:2px 5px;transition:color .15s;flex-shrink:0;background:none;border:none}
+.fl-remove:hover{color:var(--red)}
+.media-preview-wrap{margin-top:12px;display:none}.media-preview-wrap.show{display:block}
+.media-preview-wrap video,.media-preview-wrap audio{width:100%;border-radius:4px;background:var(--bg4)}
+.media-preview-wrap img{width:100%;border-radius:4px;max-height:280px;object-fit:contain;background:var(--bg4)}
+.field-hint{font-size:13px;color:var(--text3);margin-bottom:12px;display:block;line-height:1.6}
+.loaded-badge{display:none;align-items:center;gap:6px;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--orange);background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.28);padding:4px 10px;border-radius:3px;margin-bottom:10px}
+.loaded-badge.show{display:inline-flex}
+.loaded-badge svg{width:11px;height:11px;stroke:var(--orange);fill:none;stroke-width:2.2}
+.ex-label{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin:14px 0 7px;display:block}
+.ex-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:16px}
+.ex-chip{font-size:11px;font-weight:600;letter-spacing:.03em;padding:4px 11px;background:var(--bg4);border:1px solid var(--border2);border-radius:3px;color:var(--text2);cursor:pointer;transition:all .15s}
+.ex-chip:hover{border-color:var(--blue);color:var(--blue)}
+.btn-row{display:flex;gap:9px}
+.analyze-btn{flex:1;padding:12px;background:var(--blue2);border:none;border-radius:4px;color:#fff;font-size:12px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;cursor:pointer;transition:opacity .15s,transform .1s;display:flex;align-items:center;justify-content:center;gap:7px}
+.analyze-btn svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.2}
+.analyze-btn:hover{opacity:.88}.analyze-btn:active{transform:scale(.98)}.analyze-btn:disabled{opacity:.3;cursor:not-allowed}
+.clear-btn{padding:12px 16px;border-radius:4px;border:1px solid var(--border2);background:transparent;color:var(--text2);font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;cursor:pointer;transition:all .15s}
+.clear-btn:hover{border-color:var(--border3);color:var(--text)}
 
-        .light-safe.active { background: #10b981; box-shadow: 0 0 30px #10b981; border: none; }
-        .light-suspicious.active { background: #f59e0b; box-shadow: 0 0 30px #f59e0b; border: none; }
-        .light-fraud.active { background: #ef4444; box-shadow: 0 0 30px #ef4444; border: none; }
+.loading-block{display:none;flex-direction:column;align-items:center;padding:52px 20px;gap:16px;text-align:center;background:var(--bg3);border:1px solid var(--border);border-radius:6px;margin-top:14px}
+.loading-block.show{display:flex}
+.spinner{width:36px;height:36px;border:2px solid var(--border2);border-top-color:var(--blue);border-radius:50%;animation:spin .75s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-tag{font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--text3)}
+.loading-block p{font-size:13px;color:var(--text2);line-height:1.7}
 
-        .progress-container {
-            width: 100%;
-            height: 6px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 4px;
-            overflow: hidden;
-            margin: 1.5rem 0;
-        }
-        .progress-fill {
-            height: 100%;
-            background: #3b82f6;
-            width: 0%;
-            transition: width 0.4s cubic-bezier(0.1, 0.7, 1.0, 0.1);
-            box-shadow: 0 0 15px #3b82f6;
-        }
+/* RESULT */
+.result-section{display:none;margin-top:14px}.result-section.visible{display:block}
+.result-box{background:var(--bg3);border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.result-top{padding:20px 22px;border-bottom:1px solid var(--border)}
+.verdict-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+.vbadge{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;padding:7px 15px;border-radius:3px;border:1px solid}
+.vdot{width:6px;height:6px;border-radius:50%}
+.v-safe{background:rgba(34,197,94,.08);border-color:rgba(34,197,94,.3);color:#22c55e}.v-safe .vdot{background:#22c55e}
+.v-warn{background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.3);color:#f59e0b}.v-warn .vdot{background:#f59e0b}
+.v-danger{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.3);color:#ef4444}.v-danger .vdot{background:#ef4444}
+.conf-row{display:flex;align-items:center;gap:9px}
+.conf-lbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)}
+.conf-track{width:110px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden}
+.conf-fill{height:100%;border-radius:2px;transition:width .7s ease}
+.cf-safe{background:#22c55e}.cf-warn{background:#f59e0b}.cf-danger{background:#ef4444}
+.conf-pct{font-size:14px;font-weight:900;font-style:italic;color:var(--text);min-width:38px;text-align:right}
+.summary-block{font-size:13px;color:var(--text2);line-height:1.8;padding:13px 15px;background:var(--bg4);border-radius:4px;border-left:2px solid var(--border3)}
+.result-body{padding:18px 22px;display:flex;flex-direction:column;gap:18px}
+.rb-head{font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-bottom:9px}
+.findings-list{list-style:none;display:flex;flex-direction:column;gap:6px}
+.findings-list li{display:flex;align-items:flex-start;gap:9px;font-size:13px;color:var(--text2);padding:9px 11px;background:var(--bg4);border-radius:4px;line-height:1.55}
+.fi-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:6px}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+@media(max-width:500px){.detail-grid{grid-template-columns:1fr}}
+.detail-card{background:var(--bg4);border-radius:4px;padding:11px 13px}
+.dk{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:4px}
+.dv{font-size:13px;color:var(--text2);line-height:1.55}
+.action-bar{padding:13px 15px;background:rgba(59,140,245,0.07);border:1px solid rgba(59,140,245,0.2);border-radius:4px;font-size:13px;color:var(--text2);line-height:1.65}
+.action-bar strong{color:var(--blue);font-weight:700}
 
-        .radar {
-            width: 150px;
-            height: 150px;
-            border: 2px solid rgba(59, 130, 246, 0.3);
-            border-radius: 50%;
-            position: relative;
-            margin: 0 auto;
-            overflow: hidden;
-        }
-        .radar::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 100%;
-            height: 100%;
-            background: conic-gradient(from 0deg, #3b82f6, transparent 90deg);
-            transform-origin: 0 0;
-            animation: radarRotate 4s linear infinite;
-            opacity: 0.4;
-        }
-        @keyframes radarRotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
+/* CYBERCRIME BUTTON */
+.cybercrime-section{padding:0 22px 22px}
+.cybercrime-label{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);text-align:center;margin-bottom:8px;display:block;line-height:1.5}
+.cybercrime-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:9px;padding:13px;border-radius:4px;cursor:pointer;transition:all .2s;font-size:11px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;border:1px solid rgba(239,68,68,0.4);background:rgba(239,68,68,0.07);color:var(--red)}
+.cybercrime-btn svg{width:14px;height:14px;stroke:var(--red);fill:none;stroke-width:2;flex-shrink:0}
+.cybercrime-btn:hover{background:rgba(239,68,68,0.15);border-color:rgba(239,68,68,.7)}
 
-        .loader {
-            border: 3px solid rgba(255,255,255,0.1);
-            border-top: 3px solid currentColor;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            animation: spin 0.8s linear infinite;
-        }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
+.toast{position:fixed;bottom:24px;right:24px;background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padding:10px 15px;font-size:12px;font-weight:700;letter-spacing:.04em;color:var(--text2);opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;z-index:999;max-width:280px}
+.toast.show{opacity:1;transform:translateY(0)}
 
-        .reveal {
-            opacity: 0;
-            transform: translateY(20px);
-            animation: revealUp 0.6s ease-out forwards;
-        }
-        @keyframes revealUp { to { opacity: 1; transform: translateY(0); } }
-
-        .nav-link {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 13px;
-            letter-spacing: 0.25em;
-            color: #ffffff;
-            text-transform: uppercase;
-            transition: all 0.3s ease;
-            font-weight: 700;
-        }
-        .nav-link:hover { color: #3b82f6; }
-
-        .meta-tag {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            letter-spacing: 0.5em;
-            color: #ffffff;
-            text-transform: uppercase;
-            font-weight: 800;
-        }
-    </style>
+@media(max-width:600px){
+  nav{padding:12px 16px}
+  .hero{padding:44px 16px 40px}
+  .mission-left{padding:32px 16px}
+  .mission-right{padding:24px 16px}
+  .modules-section{padding:40px 16px}
+  .test-wrap{padding:24px 16px 60px}
+}
+</style>
 </head>
-<body class="font-display">
+<body>
 
-    <div class="bg-mesh"></div>
-    <div class="bg-grid"></div>
-    <div id="message-container"></div>
+<!-- NAV -->
+<nav class="z1">
+  <div class="nav-brand" onclick="goHome()">
+    <div class="nav-logo"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+    <span class="nav-name">Threat<span>Lens</span></span>
+  </div>
+  <div class="nav-right">
+    <button class="back-btn" id="backBtn" onclick="goBack()">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      <span id="backLabel">All Protocols</span>
+    </button>
+    <div class="status-badge"><div class="status-dot"></div><span data-i18n="status">Neural Core Protocol: Active</span></div>
+    <!-- LANGUAGE SELECTOR -->
+    <div class="lang-select-wrap" id="langWrap">
+      <button class="lang-btn" onclick="toggleLangMenu()" id="langBtn">
+        <span class="lang-flag" id="langFlag">🇮🇳</span>
+        <span id="langCode">EN</span>
+        <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+<!-- Backdrop and dropdown are OUTSIDE nav so backdrop-filter on nav cannot affect them -->
+<div class="lang-backdrop" id="langBackdrop"></div>
+<div class="lang-dropdown" id="langDropdown"></div>
 
-    <!-- Navigation Header -->
-    <nav id="main-nav" class="flex items-center justify-between px-10 py-8 bg-black/60 backdrop-blur-xl border-b border-white/20 sticky top-0 z-50">
-        <div class="flex flex-col gap-1 cursor-pointer group" onclick="showView('home')">
-            <span class="meta-tag text-[10px] !text-white/60">PROJECT_INCUBATOR</span>
-            <span class="text-3xl font-black tracking-tighter text-white uppercase italic">Threatlens</span>
+<!-- SCREEN 1: HOME -->
+<div class="screen active z1" id="screenHome">
+  <section class="hero">
+    <div class="hero-tag" data-i18n="heroTag">Neural Core Protocol: Active</div>
+    <h1 data-i18n="heroH1">Unmasking Digital <span class="accent">Deception.</span></h1>
+    <p class="hero-sub" data-i18n="heroSub">Advanced forensic auditing for the modern web. Grounded neural verification with absolute transparency.</p>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-n">8</div><div class="stat-l" data-i18n="statProtocols">Protocols</div></div>
+      <div class="stat"><div class="stat-n">90%+</div><div class="stat-l" data-i18n="statAccuracy">Accuracy</div></div>
+      <div class="stat"><div class="stat-n">&lt;10s</div><div class="stat-l" data-i18n="statAnalysis">Analysis</div></div>
+      <div class="stat"><div class="stat-n">0</div><div class="stat-l" data-i18n="statErrors">Key Errors</div></div>
+    </div>
+    <button class="test-data-btn" onclick="goTestPicker()">
+      <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      <span data-i18n="testBtn">Use the following data to test how it really works</span>
+    </button>
+  </section>
+
+  <section class="mission">
+    <div class="mission-left">
+      <span class="section-tag" data-i18n="missionTag">Station_Mission</span>
+      <h2 data-i18n="missionH2">The Neural Barrier Against Fraud.</h2>
+      <p data-i18n="missionP1">ThreatLens is an advanced digital defense nexus. In an era of pervasive synthetic media and sophisticated social engineering, our mission is to provide an impenetrable layer of communication verification.</p>
+      <p data-i18n="missionP2">We utilize state-of-the-art neural heuristics to dismantle deceptions hidden within emails, malicious URLs, viral misinformation, deepfakes, and voice clones.</p>
+      <div class="mission-quote"><p data-i18n="missionQuote">We show the "Forensic Trail" that informs every AI verdict.</p></div>
+    </div>
+    <div class="mission-right">
+      <div class="feature-list">
+        <div class="feature-item">
+          <div class="feat-num">0 1</div>
+          <div><div class="feat-title" data-i18n="feat1Title">Neural Forensic Hub</div><div class="feat-desc" data-i18n="feat1Desc">Cross-platform heuristic analysis across communication streams.</div></div>
         </div>
-        
-        <div class="hidden lg:flex gap-16">
-            <button onclick="showView('home')" class="nav-link">Core_Engine</button>
-            <a href="#about" class="nav-link">About_Us</a>
-            <a href="#features" class="nav-link">Protocols</a>
-            <a href="#collective" class="nav-link">Collective_Nodes</a>
+        <div class="feature-item">
+          <div class="feat-num">0 2</div>
+          <div><div class="feat-title" data-i18n="feat2Title">Explainable Intelligence</div><div class="feat-desc" data-i18n="feat2Desc">Real-time metadata evidence logs for every neural resolution.</div></div>
         </div>
-
-        <div class="hidden lg:flex items-center gap-10">
-             <span class="meta-tag !text-blue-400 font-black text-[10px]">SYSTEM_SECURE</span>
-             <button class="bg-white text-black px-8 py-3 rounded-sm text-[12px] font-black tracking-[0.3em] hover:bg-blue-600 hover:text-white transition-all uppercase shadow-lg shadow-white/5">
-                 Execute
-             </button>
+        <div class="feature-item">
+          <div class="feat-num">0 3</div>
+          <div><div class="feat-title" data-i18n="feat3Title">Zero Key Failures</div><div class="feat-desc" data-i18n="feat3Desc">API routing handled natively — no exposed credentials, ever.</div></div>
         </div>
-    </nav>
+      </div>
+    </div>
+  </section>
 
-    <div id="app-content" class="pb-20">
-        <!-- Landing View -->
-        <div id="view-home">
-            <section class="pt-32 pb-24 px-6 text-center">
-                <div class="inline-flex items-center gap-2 bg-white/20 border border-white/30 text-white px-6 py-2 rounded-sm text-[12px] font-black tracking-[0.4em] uppercase mb-10 reveal">
-                    Neural Core Protocol: Active
-                </div>
-                <h1 class="text-4xl md:text-6xl font-black tracking-tighter mb-8 max-w-6xl mx-auto leading-tight reveal uppercase italic text-white">
-                    Unmasking <span class="text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-white/60">Digital Deception.</span>
-                </h1>
-                <p class="text-xl text-slate-100 max-w-3xl mx-auto mb-16 font-light leading-relaxed reveal">
-                    Advanced forensic auditing for the modern web. We provide grounded neural verification with absolute transparency.
-                </p>
-            </section>
+  <section class="modules-section">
+    <span class="modules-label" data-i18n="selectProtocol">Select a Protocol to Begin Analysis</span>
+    <div class="mod-grid" id="modGrid"></div>
+  </section>
 
-            <!-- Station Directive (About Us & Roadmap) -->
-            <section id="about" class="py-32 px-10 max-w-7xl mx-auto border-y border-white/20 bg-white/[0.03]">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-24 items-start">
-                    <div class="reveal">
-                        <span class="meta-tag !text-blue-500 mb-8 block font-black">STATION_MISSION</span>
-                        <h2 class="text-6xl font-black tracking-tighter italic uppercase text-white mb-10 leading-none">The Neural Barrier <br>Against Fraud.</h2>
-                        <div class="space-y-8 text-slate-100 text-lg leading-relaxed font-light">
-                            <p>Threatlens is an advanced digital defense nexus. In an era of pervasive synthetic media and sophisticated social engineering, our mission is to provide an impenetrable layer of communication verification.</p>
-                            <p>We believe that in the age of "Post-Truth," automation must be met with even more intelligent verification. Threatlens utilizes state-of-the-art neural heuristics to dismantle deceptions hidden within emails, malicious URLs, and viral misinformation.</p>
-                            <p class="text-white leading-relaxed font-bold italic text-xl border-l-4 border-blue-600 pl-8">We show the "Forensic Trail" that informs every AI verdict.</p>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-1 gap-6 reveal">
-                        <div class="industrial-panel !p-12 border-white/30 bg-black rounded-sm shadow-2xl">
-                            <div class="space-y-12">
-                                <div class="flex gap-10 items-start">
-                                    <span class="meta-tag !text-white mt-1 text-lg font-black italic">01</span>
-                                    <div>
-                                        <h4 class="text-white font-black uppercase tracking-widest text-sm mb-3">Neural Forensic Hub</h4>
-                                        <p class="text-white text-xs font-mono uppercase tracking-widest leading-loose text-white/40">Cross-platform heuristic analysis across communication streams.</p>
-                                    </div>
-                                </div>
-                                <div class="flex gap-10 items-start">
-                                    <span class="meta-tag !text-white mt-1 text-lg font-black italic">02</span>
-                                    <div>
-                                        <h4 class="text-white font-black uppercase tracking-widest text-sm mb-3">Explainable Intelligence</h4>
-                                        <p class="text-white text-xs font-mono uppercase tracking-widest leading-loose text-white/40">Real-time metadata evidence logs provided for every neural resolution.</p>
-                                    </div>
-                                </div>
-                                <!-- Roadmap Section -->
-                                <div class="pt-10 border-t border-white/10 mt-6">
-                                    <span class="meta-tag !text-orange-500 font-black text-[9px] mb-6 block tracking-[0.4em]">STATION_ROADMAP_2026</span>
-                                    <div class="space-y-6">
-                                        <div class="flex gap-6 items-center">
-                                            <i data-lucide="video" class="w-5 h-5 text-white/40"></i>
-                                            <span class="text-white text-[11px] font-black uppercase tracking-widest">Protocol_06: Video Forensic (Beta)</span>
-                                        </div>
-                                        <div class="flex gap-6 items-center">
-                                            <i data-lucide="mic" class="w-5 h-5 text-white/40"></i>
-                                            <span class="text-white text-[11px] font-black uppercase tracking-widest">Protocol_07: Audio Deepfake Scan</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+  <footer>
+    <p>&copy; 2024 ThreatLens — Team Trustforge</p>
+    <div class="team-row">
+      <span class="team-chip">Talha Chougle</span><span class="team-chip">Uzair Karedia</span>
+      <span class="team-chip">Zaid Chaudhary</span><span class="team-chip">Riyaan Shaikh</span>
+    </div>
+  </footer>
+</div>
 
-            <!-- Feature Suite Grid -->
-            <section id="features" class="max-w-7xl mx-auto px-6 py-32">
-                <div class="flex flex-wrap justify-center gap-10">
-                    <div onclick="showView('email')" class="glass-card p-12 rounded-sm reveal cursor-pointer group w-full md:w-[calc(50%-20px)] lg:w-[calc(33.33%-27px)]">
-                        <div class="module-logo text-blue-400">
-                            <svg xmlns="http://www.w3.org/2008/Math/SVG" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-                        </div>
-                        <h3 class="text-3xl font-black mb-5 uppercase italic tracking-tighter text-white">Email Forensic</h3>
-                        <p class="text-white text-base leading-relaxed mb-10 font-medium italic text-white/60">Neural diagnostic of communication payloads and signatures.</p>
-                        <div class="meta-tag !text-blue-400 !tracking-widest font-black text-xs">Protocol_01</div>
-                    </div>
+<!-- SCREEN 2: TEST PICKER -->
+<div class="screen z1" id="screenTest">
+  <div class="test-wrap">
+    <div class="test-screen-hdr">
+      <span class="test-screen-tag" data-i18n="testModeTag">Test Mode — Neural Sandbox</span>
+      <h2 data-i18n="testModeH2">Choose a Protocol to Test</h2>
+      <p data-i18n="testModeP">Select any of the 8 modules. You'll get 3 real-world use case examples — click one to load it directly into the analyzer.</p>
+    </div>
+    <div class="test-mod-grid" id="testModGrid"></div>
+    <div class="usecases-panel" id="usecasesPanel">
+      <div class="uc-hdr">
+        <div class="uc-hdr-icon" id="ucHdrIcon"></div>
+        <div class="uc-hdr-text"><h3 id="ucHdrTitle"></h3><p data-i18n="ucHdrSub">Select a use case to load it into the analyzer</p></div>
+      </div>
+      <div class="uc-list" id="ucList"></div>
+    </div>
+  </div>
+</div>
 
-                    <div onclick="showView('web')" class="glass-card p-12 rounded-sm reveal cursor-pointer group w-full md:w-[calc(50%-20px)] lg:w-[calc(33.33%-27px)]">
-                        <div class="module-logo text-emerald-400">
-                            <svg xmlns="http://www.w3.org/2008/Math/SVG" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 0 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg>
-                        </div>
-                        <h3 class="text-3xl font-black mb-5 uppercase italic tracking-tighter text-white">URL Tracer</h3>
-                        <p class="text-white text-base leading-relaxed mb-10 font-medium italic text-white/60">Domain reputation auditing and integrity mapping.</p>
-                        <div class="meta-tag !text-green-400 !tracking-widest font-black text-xs">Protocol_02</div>
-                    </div>
-
-                    <div onclick="showView('social')" class="glass-card p-12 rounded-sm reveal cursor-pointer group w-full md:w-[calc(50%-20px)] lg:w-[calc(33.33%-27px)]">
-                        <div class="module-logo text-orange-400">
-                            <svg xmlns="http://www.w3.org/2008/Math/SVG" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-share-2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>
-                        </div>
-                        <h3 class="text-3xl font-black mb-5 uppercase italic tracking-tighter text-white">Post Audit</h3>
-                        <p class="text-white text-base leading-relaxed mb-10 font-medium italic text-white/60">Social media verification across Reddit and Meta platforms.</p>
-                        <div class="meta-tag !text-orange-400 !tracking-widest font-black text-xs">Protocol_03</div>
-                    </div>
-
-                    <div onclick="showView('article')" class="glass-card p-12 rounded-sm reveal cursor-pointer group w-full md:w-[calc(50%-20px)] lg:w-[calc(33.33%-27px)]">
-                        <div class="module-logo text-red-400">
-                            <svg xmlns="http://www.w3.org/2008/Math/SVG" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-newspaper"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>
-                        </div>
-                        <h3 class="text-3xl font-black mb-5 uppercase italic tracking-tighter text-white">Truth Check</h3>
-                        <p class="text-white text-base leading-relaxed mb-10 font-medium italic text-white/60">Article authenticity verification against global archives.</p>
-                        <div class="meta-tag !text-red-400 !tracking-widest font-black text-xs">Protocol_04</div>
-                    </div>
-
-                    <div onclick="showView('payload')" class="glass-card p-12 rounded-sm reveal cursor-pointer group w-full md:w-[calc(50%-20px)] lg:w-[calc(33.33%-27px)]">
-                        <div class="module-logo text-cyan-400">
-                            <svg xmlns="http://www.w3.org/2008/Math/SVG" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield-alert"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
-                        </div>
-                        <h3 class="text-3xl font-black mb-5 uppercase italic tracking-tighter text-white">Payload Sentry</h3>
-                        <p class="text-white text-base leading-relaxed mb-10 font-medium italic text-white/60">Heuristic file audit for hidden malware and code anomalies.</p>
-                        <div class="meta-tag !text-cyan-400 !tracking-widest font-black text-xs">Protocol_05</div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Compact Footer -->
-            <footer id="collective" class="mt-40 border-t border-white/10 pt-20 pb-16 px-10 bg-black">
-                <div class="max-w-7xl mx-auto flex flex-col gap-20">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-20 items-end">
-                        <div class="flex flex-col gap-4 text-left">
-                            <span class="meta-tag !text-white/30 font-black text-[9px] tracking-[0.4em]">STATION_IDENTITY</span>
-                            <span class="font-black text-3xl tracking-tighter uppercase italic text-white leading-none">Trustforge</span>
-                            <p class="text-white/40 text-xs font-mono uppercase tracking-[0.1em] mt-2 max-w-sm leading-relaxed">High-fidelity neural forensic intelligence nexus.</p>
-                        </div>
-                        <div class="flex flex-col gap-8 justify-end">
-                            <span class="meta-tag text-right md:text-left !text-white/30 font-black text-[9px] tracking-[0.4em]">COLLECTIVE_NODES</span>
-                            <div class="grid grid-cols-2 gap-x-12 gap-y-6">
-                                <a href="https://www.linkedin.com/in/talha-chougle-15a063334" target="_blank" class="text-white font-bold text-sm tracking-tight hover:text-blue-400 transition-colors">Talha Chougle</a>
-                                <a href="https://www.linkedin.com/in/md-zaid-chaudhary-a072a0371" target="_blank" class="text-white font-bold text-sm tracking-tight hover:text-blue-400 transition-colors">Zaid Chaudhary</a>
-                                <a href="https://www.linkedin.com/in/shaikh-riyaan-akeelahmed-77859837b" target="_blank" class="text-white font-bold text-sm tracking-tight hover:text-blue-400 transition-colors">Riyaan Shaikh</a>
-                                <a href="https://www.linkedin.com/in/uzair-karedia-61080a348" target="_blank" class="text-white font-bold text-sm tracking-tight hover:text-blue-400 transition-colors">Uzair Karedia</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex flex-col md:flex-row justify-center items-center pt-8 border-t border-white/5">
-                        <p class="text-white/20 text-[9px] font-mono uppercase tracking-[0.6em] font-black italic">System_Secure_Forensic_Network_2026</p>
-                    </div>
-                </div>
-            </footer>
-        </div>
-
-        <div id="module-view" class="hidden min-h-screen pt-12 px-6">
-            <div class="max-w-7xl mx-auto">
-                <button onclick="showView('home')" class="mb-12 flex items-center gap-4 text-white hover:text-blue-400 transition-colors group font-black uppercase tracking-widest text-xs">
-                    <span class="meta-tag group-hover:text-blue-400 transition-colors">BACK_TO_CORE_TERMINAL</span>
-                </button>
-                <div id="module-container"></div>
-            </div>
-        </div>
+<!-- SCREEN 3: ANALYZE -->
+<div class="screen z1" id="screenAnalyze">
+  <div class="analyze-wrap">
+    <div class="analyze-mod-hdr">
+      <div class="amh-icon" id="aIcon"></div>
+      <div><div class="amh-proto" id="aProto"></div><div class="amh-title" id="aTitle"></div></div>
     </div>
 
-    <!-- Results Template -->
-    <template id="result-template">
-        <div class="result-card mt-12 space-y-16 reveal">
-            <div class="industrial-panel">
-                <div class="terminal-header">Intelligence_Output</div>
-                <div class="flex flex-col md:flex-row justify-between gap-12 mt-12">
-                    <div class="flex-1">
-                        <span class="meta-tag !text-white block mb-6 font-black text-sm">Target_Diagnostic</span>
-                        <h3 class="target-title text-4xl font-black uppercase tracking-tighter italic text-white mb-2"></h3>
-                        <p class="target-purpose text-slate-400 text-lg mb-10 italic"></p>
-                        <div class="flex items-center gap-8">
-                             <div class="inline-block bg-white text-black px-8 py-3 font-mono text-lg font-black uppercase tracking-widest">
-                                Trust Index: <span class="trust-score"></span>
-                             </div>
-                             <div class="text-white/60 font-mono font-bold uppercase tracking-widest text-sm">
-                                <span class="origin-label">Source:</span> <span class="target-owner text-white"></span>
-                             </div>
-                        </div>
-                    </div>
-                    <div class="traffic-light-container">
-                        <div class="traffic-light">
-                            <div class="light-bulb light-fraud"></div>
-                            <div class="light-bulb light-suspicious"></div>
-                            <div class="light-bulb light-safe"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <div class="api-notice">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span data-i18n="apiNotice">After clicking <strong>Run Protocol</strong>, the analysis request is sent to Claude AI in the chat below this tool. The result will appear as a response in a few seconds.</span>
+    </div>
 
-            <div class="industrial-panel">
-                <div class="terminal-header">Neural_Diagnostic_Check</div>
-                <div id="technical-ratings" class="grid grid-cols-1 md:grid-cols-3 gap-10 mt-10"></div>
-                <div class="mt-12 p-8 bg-white/5 border border-white/10 flex items-center justify-between rounded-sm">
-                    <span class="meta-tag !text-blue-400 font-black">AI_MODEL_CONFIDENCE</span>
-                    <span class="confidence-score font-mono text-2xl font-black text-white"></span>
-                </div>
-            </div>
-
-            <div id="contextual-details" class="industrial-panel">
-                <div class="terminal-header">Forensic_Integrity_Logs</div>
-                <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-12 font-mono text-white text-lg">
-                    <div class="space-y-10">
-                        <div>
-                            <span class="meta-tag !text-white/40 block mb-2 font-black detail-label-1">Domain_Authority</span>
-                            <div class="detail-val-1 p-3 bg-white/5 border border-white/10 text-xs font-black uppercase tracking-widest">Verified</div>
-                        </div>
-                        <div>
-                            <span class="meta-tag !text-white/40 block mb-2 font-black detail-label-2">SSL_Status</span>
-                            <div class="detail-val-2 p-3 bg-white/5 border border-white/10 text-xs font-black uppercase tracking-widest">Secure</div>
-                        </div>
-                    </div>
-                    <div class="space-y-10">
-                        <div>
-                            <span class="meta-tag !text-white/40 block mb-2 font-black detail-label-3">Reputation</span>
-                            <div class="detail-val-3 p-3 bg-white/5 border border-white/10 text-xs font-black uppercase tracking-widest">Good</div>
-                        </div>
-                        <div>
-                            <span class="meta-tag !text-white/40 block mb-2 font-black detail-label-4">Blacklist</span>
-                            <div class="detail-val-4 p-3 bg-white/5 border border-white/10 text-xs font-black uppercase tracking-widest">Clean</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="industrial-panel">
-                <div class="terminal-header">Neural_Reasoning_Protocol</div>
-                <div class="mt-8 p-10 border border-white/20 bg-white/[0.03] rounded-sm">
-                    <div class="flex items-center gap-4 mb-6">
-                        <i data-lucide="brain" class="w-6 h-6 text-blue-500"></i>
-                        <span class="meta-tag !text-blue-400 font-black">LOGICAL_DIAGNOSTIC</span>
-                    </div>
-                    <p class="education-text text-white text-2xl font-light leading-relaxed italic"></p>
-                </div>
-            </div>
-
-            <div class="industrial-panel">
-                <div class="terminal-header">Defensive_Action_Advice</div>
-                <ul class="advice-list space-y-10 mt-12"></ul>
-                <div class="flex flex-wrap gap-10 mt-20 pt-20 border-t border-white/30 action-buttons"></div>
-            </div>
+    <div class="input-card">
+      <div class="input-tabs" id="inputTabs"></div>
+      <div class="input-zone" id="zone-paste">
+        <span class="field-hint" id="pasteHint"></span>
+        <div class="loaded-badge" id="loadedBadge">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          <span data-i18n="testLoaded">Test case loaded — ready to analyze</span>
         </div>
-    </template>
+        <textarea id="pasteInput"></textarea>
+      </div>
+      <div class="input-zone" id="zone-file">
+        <span class="field-hint" id="fileHint"></span>
+        <div class="file-drop-area" id="fileDropArea">
+          <input type="file" id="fileInput" onchange="handleFileSelect(event)"/>
+          <div class="fda-icon">📂</div>
+          <div class="fda-title" id="fdaTitle" data-i18n="dropTitle">Drop your file here or click to browse</div>
+          <div class="fda-sub" id="fdaSub" data-i18n="dropSub">Drag &amp; drop supported</div>
+          <div class="fda-types" id="fdaTypes"></div>
+        </div>
+        <div class="file-loaded" id="fileLoaded">
+          <div class="fl-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div style="flex:1;min-width:0"><div class="fl-name" id="flName"></div><div class="fl-size" id="flSize"></div></div>
+          <button class="fl-remove" onclick="removeFile()" title="Remove">×</button>
+        </div>
+        <div class="media-preview-wrap" id="mediaPreview"></div>
+      </div>
+      <div class="input-zone" id="zone-url">
+        <span class="field-hint" id="urlHint"></span>
+        <input type="text" class="url-input" id="urlInput" placeholder="https://example.com"/>
+      </div>
+      <span class="ex-label" data-i18n="quickExamples">Quick examples</span>
+      <div class="ex-row" id="exRow"></div>
+      <div class="btn-row">
+        <button class="analyze-btn" id="analyzeBtn" onclick="doAnalyze()">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <span data-i18n="runProtocol">Run Protocol</span>
+        </button>
+        <button class="clear-btn" onclick="clearAll()" data-i18n="clear">Clear</button>
+      </div>
+    </div>
 
-    <script>
-        const apiKey = "AIzaSyC1fv0_UXNaho6LhzyAACXWonMlbm3t_t8";
-        const BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=" + apiKey;
+    <div class="loading-block" id="loadingBlock">
+      <div class="spinner"></div>
+      <div class="loading-tag" data-i18n="analyzing">Neural Analysis In Progress</div>
+      <p data-i18n="analyzingP">Processing through the forensic engine… This usually takes 5–10 seconds.</p>
+    </div>
 
-        let currentAuditData = null;
-        let activeScanInterval = null;
+    <div class="result-section" id="resultSection">
+      <div class="result-box">
+        <div class="result-top">
+          <div class="verdict-row">
+            <div class="vbadge" id="vbadge"><span class="vdot" id="vdot"></span><span id="vtext"></span></div>
+            <div class="conf-row">
+              <span class="conf-lbl" data-i18n="confidence">Confidence</span>
+              <div class="conf-track"><div class="conf-fill" id="confFill" style="width:0%"></div></div>
+              <span class="conf-pct" id="confPct">0%</span>
+            </div>
+          </div>
+          <div class="summary-block" id="summaryBlock"></div>
+        </div>
+        <div class="result-body">
+          <div><div class="rb-head" data-i18n="forensicFindings">Forensic Findings</div><ul class="findings-list" id="findingsList"></ul></div>
+          <div><div class="rb-head" data-i18n="evidenceTrail">Evidence Trail</div><div class="detail-grid" id="detailGrid"></div></div>
+          <div class="action-bar" id="actionBar"></div>
+        </div>
+        <div class="cybercrime-section">
+          <span class="cybercrime-label" id="cyberBtnLabel"></span>
+          <button class="cybercrime-btn" onclick="window.open('https://cybercrime.gov.in','_blank')">
+            <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <span data-i18n="cyberBtn">Report to India Cybercrime Portal — cybercrime.gov.in</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-        /**
-         * Recalibrates output to ensure it follows the 0-100% logistical scale.
-         * Detects if the value is a decimal (0.0 - 1.0) and normalizes to 100-base.
-         */
-        function normalizeScore(val) {
-            if (typeof val !== 'number') return 0;
-            // If val is 0.98, return 98. If val is 98, return 98.
-            if (val > 0 && val <= 1) return (val * 100).toFixed(1);
-            return val.toFixed(1);
-        }
+<div class="toast" id="toast"><span id="toastMsg"></span></div>
 
-        function refreshIcons() {
-            if (window.lucide && typeof window.lucide.createIcons === 'function') {
-                window.lucide.createIcons();
-            }
-        }
+<script>
+/* ═══════════════════════════════════════════
+   LANGUAGE SYSTEM
+═══════════════════════════════════════════ */
+const LANGUAGES = [
+  {code:'en',  name:'English',    native:'English',   flag:'🇬🇧'},
+  {code:'hi',  name:'Hindi',      native:'हिन्दी',      flag:'🇮🇳'},
+  {code:'mr',  name:'Marathi',    native:'मराठी',       flag:'🇮🇳'},
+  {code:'ta',  name:'Tamil',      native:'தமிழ்',       flag:'🇮🇳'},
+  {code:'te',  name:'Telugu',     native:'తెలుగు',      flag:'🇮🇳'},
+  {code:'bn',  name:'Bengali',    native:'বাংলা',       flag:'🇮🇳'},
+  {code:'gu',  name:'Gujarati',   native:'ગુજરાતી',     flag:'🇮🇳'},
+  {code:'kn',  name:'Kannada',    native:'ಕನ್ನಡ',       flag:'🇮🇳'},
+  {code:'pa',  name:'Punjabi',    native:'ਪੰਜਾਬੀ',      flag:'🇮🇳'},
+  {code:'ur',  name:'Urdu',       native:'اردو',        flag:'🇵🇰'},
+  {code:'ar',  name:'Arabic',     native:'العربية',     flag:'🇸🇦'},
+  {code:'fr',  name:'French',     native:'Français',   flag:'🇫🇷'},
+  {code:'de',  name:'German',     native:'Deutsch',    flag:'🇩🇪'},
+  {code:'es',  name:'Spanish',    native:'Español',    flag:'🇪🇸'},
+  {code:'zh',  name:'Chinese',    native:'中文',        flag:'🇨🇳'},
+];
 
-        function showMessage(msg) {
-            const container = document.getElementById('message-container');
-            const el = document.createElement('div');
-            el.className = 'message-box text-white font-mono text-sm fixed bottom-10 right-10 bg-black border-2 border-white/40 p-8 rounded-sm shadow-2xl z-[100]';
-            el.innerText = msg;
-            container.appendChild(el);
-            setTimeout(() => el.remove(), 4000);
-        }
+const TRANSLATIONS = {
+  en:{
+    status:'Neural Core Protocol: Active', heroTag:'Neural Core Protocol: Active',
+    heroH1:'Unmasking Digital <span class="accent">Deception.</span>',
+    heroSub:'Advanced forensic auditing for the modern web. Grounded neural verification with absolute transparency.',
+    statProtocols:'Protocols', statAccuracy:'Accuracy', statAnalysis:'Analysis', statErrors:'Key Errors',
+    testBtn:'Use the following data to test how it really works',
+    missionTag:'Station_Mission', missionH2:'The Neural Barrier Against Fraud.',
+    missionP1:'ThreatLens is an advanced digital defense nexus. In an era of pervasive synthetic media and sophisticated social engineering, our mission is to provide an impenetrable layer of communication verification.',
+    missionP2:'We utilize state-of-the-art neural heuristics to dismantle deceptions hidden within emails, malicious URLs, viral misinformation, deepfakes, and voice clones.',
+    missionQuote:'We show the "Forensic Trail" that informs every AI verdict.',
+    feat1Title:'Neural Forensic Hub', feat1Desc:'Cross-platform heuristic analysis across communication streams.',
+    feat2Title:'Explainable Intelligence', feat2Desc:'Real-time metadata evidence logs for every neural resolution.',
+    feat3Title:'Zero Key Failures', feat3Desc:'API routing handled natively — no exposed credentials, ever.',
+    selectProtocol:'Select a Protocol to Begin Analysis',
+    testModeTag:'Test Mode — Neural Sandbox', testModeH2:'Choose a Protocol to Test',
+    testModeP:'Select any of the 8 modules. You\'ll get 3 real-world use case examples — click one to load it directly into the analyzer.',
+    ucHdrSub:'Select a use case to load it into the analyzer', ucLoadBtn:'Load & Analyze',
+    apiNotice:'After clicking <strong>Run Protocol</strong>, the analysis is sent to Claude AI. The result appears in the chat below in a few seconds.',
+    testLoaded:'Test case loaded — ready to analyze', dropTitle:'Drop your file here or click to browse',
+    dropSub:'Drag & drop supported', quickExamples:'Quick examples',
+    runProtocol:'Run Protocol', clear:'Clear', analyzing:'Neural Analysis In Progress',
+    analyzingP:'Processing through the forensic engine… This usually takes 5–10 seconds.',
+    confidence:'Confidence', forensicFindings:'Forensic Findings', evidenceTrail:'Evidence Trail',
+    cyberBtn:'Report to India Cybercrime Portal — cybercrime.gov.in',
+    cyberDanger:'Threat detected — report this immediately to the Indian Cybercrime Portal',
+    cyberWarn:'Suspicious content found — you can report this to the Indian Cybercrime Portal for review',
+    cyberSafe:'No threat detected — you can still report any concerns to the Indian Cybercrime Portal',
+    backAll:'All Protocols', backTest:'Back to Test Cases', backHome:'Back to Home',
+    pasteTab:'Paste Text', fileTab:'Upload File', urlTab:'Enter URL',
+    toastLoaded:'Example loaded — click Run Protocol', toastEmpty:'Please enter or upload content to analyze',
+    toastDone:'Neural analysis complete', toastFailed:'Analysis failed — please try again',
+    fileLoaded:'File loaded successfully', fileReplace:'Click to replace with a different file',
+    fileDefault:'Drop your file here or click to browse', fileDefaultSub:'Drag & drop supported',
+  },
+  hi:{
+    status:'न्यूरल कोर प्रोटोकॉल: सक्रिय', heroTag:'न्यूरल कोर प्रोटोकॉल: सक्रिय',
+    heroH1:'डिजिटल धोखे को <span class="accent">उजागर करना।</span>',
+    heroSub:'आधुनिक वेब के लिए उन्नत फोरेंसिक ऑडिटिंग। पूर्ण पारदर्शिता के साथ न्यूरल सत्यापन।',
+    statProtocols:'प्रोटोकॉल', statAccuracy:'सटीकता', statAnalysis:'विश्लेषण', statErrors:'त्रुटियाँ',
+    testBtn:'परीक्षण डेटा का उपयोग करें और देखें यह कैसे काम करता है',
+    missionTag:'स्टेशन_मिशन', missionH2:'धोखाधड़ी के विरुद्ध न्यूरल बाधा।',
+    missionP1:'ThreatLens एक उन्नत डिजिटल सुरक्षा केंद्र है। सिंथेटिक मीडिया और सोशल इंजीनियरिंग के युग में, हमारा मिशन संचार सत्यापन की एक अभेद्य परत प्रदान करना है।',
+    missionP2:'हम ईमेल, दुर्भावनापूर्ण URL, वायरल गलत सूचना, डीपफेक और आवाज क्लोन में छिपे धोखे को नष्ट करते हैं।',
+    missionQuote:'हम वह "फोरेंसिक ट्रेल" दिखाते हैं जो हर AI निर्णय को सूचित करता है।',
+    feat1Title:'न्यूरल फोरेंसिक हब', feat1Desc:'संचार धाराओं में क्रॉस-प्लेटफ़ॉर्म विश्लेषण।',
+    feat2Title:'व्याख्यात्मक बुद्धिमत्ता', feat2Desc:'हर न्यूरल समाधान के लिए रीयल-टाइम मेटाडेटा लॉग।',
+    feat3Title:'शून्य की विफलताएं', feat3Desc:'API रूटिंग मूल रूप से संभाली — कोई उजागर क्रेडेंशियल नहीं।',
+    selectProtocol:'विश्लेषण शुरू करने के लिए प्रोटोकॉल चुनें',
+    testModeTag:'परीक्षण मोड — न्यूरल सैंडबॉक्स', testModeH2:'परीक्षण के लिए प्रोटोकॉल चुनें',
+    testModeP:'8 में से कोई भी मॉड्यूल चुनें। आपको 3 वास्तविक उपयोग के उदाहरण मिलेंगे।',
+    ucHdrSub:'विश्लेषक में लोड करने के लिए एक उपयोग केस चुनें', ucLoadBtn:'लोड करें और विश्लेषण करें',
+    apiNotice:'<strong>Run Protocol</strong> क्लिक करने के बाद, विश्लेषण Claude AI को भेजा जाता है। परिणाम कुछ सेकंड में नीचे दिखेगा।',
+    testLoaded:'परीक्षण केस लोड — विश्लेषण के लिए तैयार', dropTitle:'यहाँ फ़ाइल छोड़ें या क्लिक करें',
+    dropSub:'ड्रैग और ड्रॉप समर्थित', quickExamples:'त्वरित उदाहरण',
+    runProtocol:'प्रोटोकॉल चलाएं', clear:'साफ करें', analyzing:'न्यूरल विश्लेषण प्रगति में',
+    analyzingP:'फोरेंसिक इंजन के माध्यम से प्रसंस्करण… इसमें आमतौर पर 5-10 सेकंड लगते हैं।',
+    confidence:'विश्वास', forensicFindings:'फोरेंसिक निष्कर्ष', evidenceTrail:'साक्ष्य ट्रेल',
+    cyberBtn:'भारत साइबर क्राइम पोर्टल पर रिपोर्ट करें — cybercrime.gov.in',
+    cyberDanger:'खतरा पाया गया — तुरंत भारतीय साइबर क्राइम पोर्टल पर रिपोर्ट करें',
+    cyberWarn:'संदिग्ध सामग्री मिली — समीक्षा के लिए साइबर क्राइम पोर्टल पर रिपोर्ट करें',
+    cyberSafe:'कोई खतरा नहीं — आप फिर भी साइबर क्राइम पोर्टल पर रिपोर्ट कर सकते हैं',
+    backAll:'सभी प्रोटोकॉल', backTest:'परीक्षण केसेज पर वापस', backHome:'होम पर वापस',
+    pasteTab:'टेक्स्ट पेस्ट करें', fileTab:'फ़ाइल अपलोड करें', urlTab:'URL दर्ज करें',
+    toastLoaded:'उदाहरण लोड — Run Protocol क्लिक करें', toastEmpty:'विश्लेषण के लिए सामग्री दर्ज करें',
+    toastDone:'न्यूरल विश्लेषण पूरा', toastFailed:'विश्लेषण विफल — पुनः प्रयास करें',
+    fileLoaded:'फ़ाइल सफलतापूर्वक लोड हुई', fileReplace:'एक अलग फ़ाइल से बदलने के लिए क्लिक करें',
+    fileDefault:'यहाँ फ़ाइल छोड़ें या ब्राउज़ करने के लिए क्लिक करें', fileDefaultSub:'ड्रैग और ड्रॉप समर्थित',
+  },
+  mr:{
+    status:'न्यूरल कोर प्रोटोकॉल: सक्रिय', heroTag:'न्यूरल कोर प्रोटोकॉल: सक्रिय',
+    heroH1:'डिजिटल फसवणूक <span class="accent">उघडकाढणे.</span>',
+    heroSub:'आधुनिक वेबसाठी प्रगत फोरेन्सिक ऑडिटिंग. पूर्ण पारदर्शकतेसह न्यूरल सत्यापन.',
+    statProtocols:'प्रोटोकॉल', statAccuracy:'अचूकता', statAnalysis:'विश्लेषण', statErrors:'त्रुटी',
+    testBtn:'हे डेटा वापरून चाचणी करा आणि पाहा ते कसे काम करते',
+    missionTag:'स्टेशन_मिशन', missionH2:'फसवणुकीविरुद्ध न्यूरल अडथळा.',
+    missionP1:'ThreatLens एक प्रगत डिजिटल संरक्षण केंद्र आहे. सिंथेटिक मीडियाच्या युगात संचार सत्यापनाचा एक भेद्य थर प्रदान करणे हे आमचे ध्येय आहे.',
+    missionP2:'आम्ही ईमेल, दुर्भावनापूर्ण URL, व्हायरल चुकीची माहिती, डीपफेक आणि व्हॉइस क्लोनमध्ये लपलेली फसवणूक नष्ट करतो.',
+    missionQuote:'आम्ही प्रत्येक AI निर्णयाला माहिती देणारी "फोरेन्सिक ट्रेल" दाखवतो.',
+    feat1Title:'न्यूरल फोरेन्सिक हब', feat1Desc:'संचार प्रवाहांवर क्रॉस-प्लॅटफॉर्म विश्लेषण.',
+    feat2Title:'स्पष्ट बुद्धिमत्ता', feat2Desc:'प्रत्येक न्यूरल रिझोल्यूशनसाठी रिअल-टाइम मेटाडेटा लॉग.',
+    feat3Title:'शून्य की अपयश', feat3Desc:'API रूटिंग मूळत: हाताळली — कोणतेही उघड क्रेडेन्शियल नाही.',
+    selectProtocol:'विश्लेषण सुरू करण्यासाठी प्रोटोकॉल निवडा',
+    testModeTag:'चाचणी मोड — न्यूरल सँडबॉक्स', testModeH2:'चाचणीसाठी प्रोटोकॉल निवडा',
+    testModeP:'8 पैकी कोणताही मॉड्यूल निवडा. तुम्हाला 3 वास्तविक उदाहरणे मिळतील.',
+    ucHdrSub:'विश्लेषकात लोड करण्यासाठी एक वापर प्रकरण निवडा', ucLoadBtn:'लोड करा आणि विश्लेषण करा',
+    apiNotice:'<strong>Run Protocol</strong> क्लिक केल्यानंतर, विश्लेषण Claude AI ला पाठवले जाते.',
+    testLoaded:'चाचणी प्रकरण लोड — विश्लेषणासाठी तयार', dropTitle:'येथे फाईल टाका किंवा क्लिक करा',
+    dropSub:'ड्रॅग आणि ड्रॉप समर्थित', quickExamples:'त्वरित उदाहरणे',
+    runProtocol:'प्रोटोकॉल चालवा', clear:'साफ करा', analyzing:'न्यूरल विश्लेषण सुरू आहे',
+    analyzingP:'फोरेन्सिक इंजिनद्वारे प्रक्रिया… साधारणत: 5-10 सेकंद लागतात.',
+    confidence:'विश्वास', forensicFindings:'फोरेन्सिक निष्कर्ष', evidenceTrail:'पुरावा ट्रेल',
+    cyberBtn:'भारत सायबर क्राइम पोर्टलवर तक्रार करा — cybercrime.gov.in',
+    cyberDanger:'धोका आढळला — भारतीय सायबर क्राइम पोर्टलवर तातडीने तक्रार करा',
+    cyberWarn:'संशयास्पद सामग्री आढळली — सायबर क्राइम पोर्टलवर तक्रार करा',
+    cyberSafe:'कोणताही धोका नाही — तरीही पोर्टलवर तक्रार करू शकता',
+    backAll:'सर्व प्रोटोकॉल', backTest:'चाचणी प्रकरणांवर परत', backHome:'होमवर परत',
+    pasteTab:'मजकूर पेस्ट करा', fileTab:'फाईल अपलोड करा', urlTab:'URL प्रविष्ट करा',
+    toastLoaded:'उदाहरण लोड — Run Protocol क्लिक करा', toastEmpty:'विश्लेषणासाठी सामग्री प्रविष्ट करा',
+    toastDone:'न्यूरल विश्लेषण पूर्ण', toastFailed:'विश्लेषण अयशस्वी — पुन्हा प्रयत्न करा',
+    fileLoaded:'फाईल यशस्वीरित्या लोड झाली', fileReplace:'वेगळ्या फाईलने बदलण्यासाठी क्लिक करा',
+    fileDefault:'येथे फाईल टाका किंवा ब्राउज़ करण्यासाठी क्लिक करा', fileDefaultSub:'ड्रॅग आणि ड्रॉप समर्थित',
+  },
+  ta:{
+    status:'நியூரல் கோர் நெறிமுறை: செயலில்', heroTag:'நியூரல் கோர் நெறிமுறை: செயலில்',
+    heroH1:'டிஜிட்டல் மோசடியை <span class="accent">அம்பலப்படுத்துதல்.</span>',
+    heroSub:'நவீன வலைக்கான மேம்பட்ட தடயவியல் தணிக்கை. முழு வெளிப்படைத்தன்மையுடன் நியூரல் சரிபார்ப்பு.',
+    statProtocols:'நெறிமுறைகள்', statAccuracy:'துல்லியம்', statAnalysis:'பகுப்பாய்வு', statErrors:'பிழைகள்',
+    testBtn:'சோதனை தரவைப் பயன்படுத்தி எவ்வாறு செயல்படுகிறது என்று பாருங்கள்',
+    missionTag:'நிலையம்_நோக்கம்', missionH2:'மோசடிக்கு எதிரான நியூரல் தடை.',
+    missionP1:'ThreatLens ஒரு மேம்பட்ட டிஜிட்டல் பாதுகாப்பு மையம். செயற்கை ஊடகத்தின் இந்த யுகத்தில் தகவல் தொடர்பு சரிபார்ப்பின் ஒரு வலுவான அடுக்கை வழங்குவதே எமது நோக்கம்.',
+    missionP2:'மின்னஞ்சல்கள், தீங்கிழைக்கும் URL கள், வைரல் தவறான தகவல், டீப்ஃபேக்குகள் மற்றும் குரல் குளோன்களில் உள்ள மோசடிகளை அழிக்கிறோம்.',
+    missionQuote:'ஒவ்வொரு AI தீர்ப்பையும் தெரியப்படுத்தும் "தடயவியல் தடம்" காட்டுகிறோம்.',
+    feat1Title:'நியூரல் தடயவியல் மையம்', feat1Desc:'தகவல் தொடர்பு ஸ்ட்ரீம்களில் குறுக்கு-தளம் பகுப்பாய்வு.',
+    feat2Title:'விளக்கமான நுண்ணறிவு', feat2Desc:'ஒவ்வொரு நியூரல் தீர்வுக்கும் நிகழ்நேர மெட்டாடேட்டா பதிவுகள்.',
+    feat3Title:'பூஜ்ஜிய முக்கிய தோல்விகள்', feat3Desc:'API ரூட்டிங் சொந்தமாக கையாளப்படுகிறது — வெளிப்படுத்தப்பட்ட சான்றுகள் இல்லை.',
+    selectProtocol:'பகுப்பாய்வை தொடங்க ஒரு நெறிமுறையைத் தேர்ந்தெடுக்கவும்',
+    testModeTag:'சோதனை பயன்முறை — நியூரல் சாண்ட்பாக்ஸ்', testModeH2:'சோதிக்க ஒரு நெறிமுறையைத் தேர்ந்தெடுக்கவும்',
+    testModeP:'8 தொகுதிகளில் ஏதேனும் ஒன்றைத் தேர்ந்தெடுக்கவும். 3 உண்மையான பயன்பாட்டு உதாரணங்கள் கிடைக்கும்.',
+    ucHdrSub:'பகுப்பாய்வியில் ஏற்ற ஒரு பயன்பாட்டு நிகழ்வைத் தேர்ந்தெடுக்கவும்', ucLoadBtn:'ஏற்று & பகுப்பாய்வு செய்',
+    apiNotice:'<strong>Run Protocol</strong> கிளிக் செய்த பிறகு, பகுப்பாய்வு Claude AI க்கு அனுப்பப்படும்.',
+    testLoaded:'சோதனை நிகழ்வு ஏற்றப்பட்டது — பகுப்பாய்வுக்கு தயார்', dropTitle:'கோப்பை இங்கே கைவிடுங்கள் அல்லது கிளிக் செய்யுங்கள்',
+    dropSub:'இழுத்து விடுதல் ஆதரிக்கப்படுகிறது', quickExamples:'விரைவு உதாரணங்கள்',
+    runProtocol:'நெறிமுறையை இயக்கு', clear:'அழி', analyzing:'நியூரல் பகுப்பாய்வு நடைபெறுகிறது',
+    analyzingP:'தடயவியல் என்ஜின் மூலம் செயலாக்கம்… பொதுவாக 5-10 வினாடிகள் ஆகும்.',
+    confidence:'நம்பகத்தன்மை', forensicFindings:'தடயவியல் கண்டுபிடிப்புகள்', evidenceTrail:'சான்று தடம்',
+    cyberBtn:'இந்திய சைபர் கிரைம் போர்ட்டலில் புகாரளிக்கவும் — cybercrime.gov.in',
+    cyberDanger:'அச்சுறுத்தல் கண்டறியப்பட்டது — உடனடியாக புகாரளிக்கவும்',
+    cyberWarn:'சந்தேகாஸ்பட உள்ளடக்கம் — சைபர் கிரைம் போர்ட்டலில் புகாரளிக்கவும்',
+    cyberSafe:'அச்சுறுத்தல் இல்லை — இன்னும் போர்ட்டலில் புகாரளிக்கலாம்',
+    backAll:'அனைத்து நெறிமுறைகள்', backTest:'சோதனை நிகழ்வுகளுக்கு திரும்பு', backHome:'முகப்புக்கு திரும்பு',
+    pasteTab:'உரையை ஒட்டுக', fileTab:'கோப்பை பதிவேற்று', urlTab:'URL உள்ளிடு',
+    toastLoaded:'உதாரணம் ஏற்றப்பட்டது — Run Protocol கிளிக் செய்யுங்கள்', toastEmpty:'பகுப்பாய்வுக்கு உள்ளடக்கம் உள்ளிடுங்கள்',
+    toastDone:'நியூரல் பகுப்பாய்வு முடிந்தது', toastFailed:'பகுப்பாய்வு தோல்வியடைந்தது — மீண்டும் முயற்சிக்கவும்',
+    fileLoaded:'கோப்பு வெற்றிகரமாக ஏற்றப்பட்டது', fileReplace:'வேறு கோப்புடன் மாற்ற கிளிக் செய்யுங்கள்',
+    fileDefault:'கோப்பை இங்கே கைவிடுங்கள் அல்லது உலாவ கிளிக் செய்யுங்கள்', fileDefaultSub:'இழுத்து விடுதல் ஆதரிக்கப்படுகிறது',
+  },
+  te:{
+    status:'న్యూరల్ కోర్ ప్రోటోకాల్: సక్రియం', heroTag:'న్యూరల్ కోర్ ప్రోటోకాల్: సక్రియం',
+    heroH1:'డిజిటల్ మోసాన్ని <span class="accent">బయటపెట్టడం.</span>',
+    heroSub:'ఆధునిక వెబ్ కోసం అధునాతన ఫోరెన్సిక్ ఆడిటింగ్. పూర్తి పారదర్శకతతో న్యూరల్ వెరిఫికేషన్.',
+    statProtocols:'ప్రోటోకాల్‌లు', statAccuracy:'ఖచ్చితత్వం', statAnalysis:'విశ్లేషణ', statErrors:'లోపాలు',
+    testBtn:'పరీక్ష డేటాను ఉపయోగించి ఇది ఎలా పని చేస్తుందో చూడండి',
+    missionTag:'స్టేషన్_మిషన్', missionH2:'మోసానికి వ్యతిరేకంగా న్యూరల్ అడ్డంకి.',
+    missionP1:'ThreatLens ఒక అధునాతన డిజిటల్ రక్షణ కేంద్రం. కృత్రిమ మీడియా యుగంలో కమ్యూనికేషన్ వెరిఫికేషన్ అందించడం మా లక్ష్యం.',
+    missionP2:'ఇమెయిల్‌లు, హానికరమైన URLలు, వైరల్ తప్పుడు సమాచారం, డీప్‌ఫేక్‌లు మరియు వాయిస్ క్లోన్‌లలో దాగున్న మోసాలను నాశనం చేస్తాము.',
+    missionQuote:'ప్రతి AI తీర్పును తెలియజేసే "ఫోరెన్సిక్ ట్రైల్" చూపిస్తాము.',
+    feat1Title:'న్యూరల్ ఫోరెన్సిక్ హబ్', feat1Desc:'కమ్యూనికేషన్ స్ట్రీమ్‌లలో క్రాస్-ప్లాట్‌ఫామ్ విశ్లేషణ.',
+    feat2Title:'వివరణాత్మక తెలివి', feat2Desc:'ప్రతి న్యూరల్ రిజల్యూషన్ కోసం రియల్-టైమ్ మెటాడేటా లాగ్‌లు.',
+    feat3Title:'జీరో కీ వైఫల్యాలు', feat3Desc:'API రూటింగ్ స్థానికంగా నిర్వహించబడుతుంది — క్రెడెన్షియల్‌లు బహిర్గతం కావు.',
+    selectProtocol:'విశ్లేషణ ప్రారంభించడానికి ప్రోటోకాల్ ఎంచుకోండి',
+    testModeTag:'టెస్ట్ మోడ్ — న్యూరల్ శాండ్‌బాక్స్', testModeH2:'పరీక్షించడానికి ప్రోటోకాల్ ఎంచుకోండి',
+    testModeP:'8 మాడ్యూల్‌లలో ఏదైనా ఒకటి ఎంచుకోండి. 3 వాస్తవ ఉదాహరణలు లభిస్తాయి.',
+    ucHdrSub:'విశ్లేషకానికి లోడ్ చేయడానికి ఒక ఉపయోగ సందర్భాన్ని ఎంచుకోండి', ucLoadBtn:'లోడ్ చేయండి & విశ్లేషించండి',
+    apiNotice:'<strong>Run Protocol</strong> క్లిక్ చేసిన తర్వాత, విశ్లేషణ Claude AI కి పంపబడుతుంది.',
+    testLoaded:'పరీక్ష సందర్భం లోడ్ — విశ్లేషణకు సిద్ధంగా ఉంది', dropTitle:'ఇక్కడ ఫైల్ వదలండి లేదా క్లిక్ చేయండి',
+    dropSub:'డ్రాగ్ & డ్రాప్ మద్దతు ఉంది', quickExamples:'త్వరిత ఉదాహరణలు',
+    runProtocol:'ప్రోటోకాల్ అమలు చేయండి', clear:'క్లియర్', analyzing:'న్యూరల్ విశ్లేషణ జరుగుతోంది',
+    analyzingP:'ఫోరెన్సిక్ ఇంజిన్ ద్వారా ప్రాసెస్ చేయడం… సాధారణంగా 5-10 సెకన్లు పడుతుంది.',
+    confidence:'విశ్వాసం', forensicFindings:'ఫోరెన్సిక్ అన్వేషణలు', evidenceTrail:'సాక్ష్యం ట్రైల్',
+    cyberBtn:'భారత సైబర్ క్రైమ్ పోర్టల్‌లో నివేదించండి — cybercrime.gov.in',
+    cyberDanger:'ముప్పు కనుగొనబడింది — వెంటనే నివేదించండి', cyberWarn:'అనుమానాస్పద కంటెంట్ — నివేదించండి',
+    cyberSafe:'ముప్పు లేదు — అయినా నివేదించవచ్చు',
+    backAll:'అన్ని ప్రోటోకాల్‌లు', backTest:'టెస్ట్ కేసులకు తిరిగి', backHome:'హోమ్‌కు తిరిగి',
+    pasteTab:'టెక్స్ట్ పేస్ట్ చేయండి', fileTab:'ఫైల్ అప్లోడ్ చేయండి', urlTab:'URL నమోదు చేయండి',
+    toastLoaded:'ఉదాహరణ లోడ్ — Run Protocol క్లిక్ చేయండి', toastEmpty:'కంటెంట్ నమోదు చేయండి',
+    toastDone:'న్యూరల్ విశ్లేషణ పూర్తయింది', toastFailed:'విశ్లేషణ విఫలమైంది — మళ్ళీ ప్రయత్నించండి',
+    fileLoaded:'ఫైల్ విజయవంతంగా లోడ్ అయింది', fileReplace:'వేరొక ఫైల్‌తో భర్తీ చేయడానికి క్లిక్ చేయండి',
+    fileDefault:'ఇక్కడ ఫైల్ వదలండి లేదా బ్రౌజ్ చేయడానికి క్లిక్ చేయండి', fileDefaultSub:'డ్రాగ్ & డ్రాప్ మద్దతు ఉంది',
+  },
+  bn:{
+    status:'নিউরাল কোর প্রোটোকল: সক্রিয়', heroTag:'নিউরাল কোর প্রোটোকল: সক্রিয়',
+    heroH1:'ডিজিটাল প্রতারণা <span class="accent">উন্মোচন।</span>',
+    heroSub:'আধুনিক ওয়েবের জন্য উন্নত ফরেনসিক অডিটিং। সম্পূর্ণ স্বচ্ছতার সাথে নিউরাল যাচাইকরণ।',
+    statProtocols:'প্রোটোকল', statAccuracy:'নির্ভুলতা', statAnalysis:'বিশ্লেষণ', statErrors:'ত্রুটি',
+    testBtn:'পরীক্ষার ডেটা ব্যবহার করুন এবং দেখুন এটি কীভাবে কাজ করে',
+    missionTag:'স্টেশন_মিশন', missionH2:'প্রতারণার বিরুদ্ধে নিউরাল বাধা।',
+    missionP1:'ThreatLens একটি উন্নত ডিজিটাল প্রতিরক্ষা কেন্দ্র। কৃত্রিম মিডিয়ার যুগে যোগাযোগ যাচাইয়ের একটি অভেদ্য স্তর প্রদান করাই আমাদের লক্ষ্য।',
+    missionP2:'আমরা ইমেইল, দূষিত URL, ভাইরাল ভুল তথ্য, ডিপফেক এবং ভয়েস ক্লোনে লুকিয়ে থাকা প্রতারণা ধ্বংস করি।',
+    missionQuote:'আমরা সেই "ফরেনসিক ট্রেইল" দেখাই যা প্রতিটি AI রায়কে জানায়।',
+    feat1Title:'নিউরাল ফরেনসিক হাব', feat1Desc:'যোগাযোগ স্ট্রিম জুড়ে ক্রস-প্ল্যাটফর্ম বিশ্লেষণ।',
+    feat2Title:'ব্যাখ্যাযোগ্য বুদ্ধিমত্তা', feat2Desc:'প্রতিটি নিউরাল রেজোলিউশনের জন্য রিয়েল-টাইম মেটাডেটা লগ।',
+    feat3Title:'শূন্য কী ব্যর্থতা', feat3Desc:'API রাউটিং নেটিভলি পরিচালিত — কোনো শংসাপত্র উন্মোচিত হয় না।',
+    selectProtocol:'বিশ্লেষণ শুরু করতে একটি প্রোটোকল বেছে নিন',
+    testModeTag:'পরীক্ষা মোড — নিউরাল স্যান্ডবক্স', testModeH2:'পরীক্ষার জন্য একটি প্রোটোকল বেছে নিন',
+    testModeP:'৮টি মডিউলের মধ্যে যেকোনো একটি বেছে নিন। আপনি ৩টি বাস্তব উদাহরণ পাবেন।',
+    ucHdrSub:'বিশ্লেষকে লোড করতে একটি ব্যবহার ক্ষেত্র নির্বাচন করুন', ucLoadBtn:'লোড করুন এবং বিশ্লেষণ করুন',
+    apiNotice:'<strong>Run Protocol</strong> ক্লিক করার পরে, বিশ্লেষণ Claude AI-এ পাঠানো হয়।',
+    testLoaded:'পরীক্ষার ক্ষেত্র লোড — বিশ্লেষণের জন্য প্রস্তুত', dropTitle:'এখানে ফাইল ড্রপ করুন বা ক্লিক করুন',
+    dropSub:'ড্র্যাগ ও ড্রপ সমর্থিত', quickExamples:'দ্রুত উদাহরণ',
+    runProtocol:'প্রোটোকল চালান', clear:'পরিষ্কার করুন', analyzing:'নিউরাল বিশ্লেষণ চলছে',
+    analyzingP:'ফরেনসিক ইঞ্জিনের মাধ্যমে প্রক্রিয়াকরণ… সাধারণত ৫-১০ সেকেন্ড লাগে।',
+    confidence:'আস্থা', forensicFindings:'ফরেনসিক ফলাফল', evidenceTrail:'প্রমাণ ট্রেইল',
+    cyberBtn:'ভারত সাইবার ক্রাইম পোর্টালে রিপোর্ট করুন — cybercrime.gov.in',
+    cyberDanger:'হুমকি সনাক্ত — অবিলম্বে রিপোর্ট করুন', cyberWarn:'সন্দেহজনক বিষয়বস্তু — রিপোর্ট করুন',
+    cyberSafe:'কোনো হুমকি নেই — তবুও রিপোর্ট করতে পারেন',
+    backAll:'সব প্রোটোকল', backTest:'পরীক্ষার ক্ষেত্রে ফিরে যান', backHome:'হোমে ফিরে যান',
+    pasteTab:'টেক্সট পেস্ট করুন', fileTab:'ফাইল আপলোড করুন', urlTab:'URL লিখুন',
+    toastLoaded:'উদাহরণ লোড — Run Protocol ক্লিক করুন', toastEmpty:'বিশ্লেষণের জন্য বিষয়বস্তু লিখুন',
+    toastDone:'নিউরাল বিশ্লেষণ সম্পূর্ণ', toastFailed:'বিশ্লেষণ ব্যর্থ — পুনরায় চেষ্টা করুন',
+    fileLoaded:'ফাইল সফলভাবে লোড হয়েছে', fileReplace:'ভিন্ন ফাইল দিয়ে প্রতিস্থাপন করতে ক্লিক করুন',
+    fileDefault:'এখানে ফাইল ড্রপ করুন বা ব্রাউজ করতে ক্লিক করুন', fileDefaultSub:'ড্র্যাগ ও ড্রপ সমর্থিত',
+  },
+  gu:{status:'ન્યુરલ કોર પ્રોટોકોલ: સક્રિય',heroTag:'ન્યુરલ કોર પ્રોટોકોલ: સક્રિય',heroH1:'ડિજિટલ છેતરપિંડી <span class="accent">ઉઘાડી પાડો.</span>',heroSub:'આધુનિક વેબ માટે અદ્યતન ફોરેન્સિક ઓડિટિંગ.',statProtocols:'પ્રોટોકોલ',statAccuracy:'ચોકસાઈ',statAnalysis:'વિશ્લેષણ',statErrors:'ભૂલો',testBtn:'ટેસ્ટ ડેટા વાપરી જુઓ',missionTag:'સ્ટેશન_મિશન',missionH2:'છેતરપિંડી સામે ન્યુરલ અવરોધ.',missionP1:'ThreatLens એ અદ્યતન ડિજિટલ સંરક્ષણ હબ છે.',missionP2:'ઈમેઈલ, URL, ડીપફેક અને વૉઈસ ક્લોનમાં છૂપાઈ ભ્રામક માહિતી નષ્ટ કરો.',missionQuote:'અમે દરેક AI ચૂકાદાની "ફોરેન્સિક ટ્રેઇલ" બતાવીએ છીએ.',feat1Title:'ન્યુરલ ફોરેન્સિક હબ',feat1Desc:'ક્રોસ-પ્લેટફોર્મ વિશ્લેષણ.',feat2Title:'સ્પષ્ટ ગુપ્ત માહિતી',feat2Desc:'રીઅલ-ટાઈમ મેટાડેટા લૉગ.',feat3Title:'શૂન્ય ખામી',feat3Desc:'API રૂટિંગ સ્થાનિક રીતે.',selectProtocol:'વિશ્લેષણ શરૂ કરવા પ્રોટોકોલ પસંદ કરો',testModeTag:'ટેસ્ટ મોડ',testModeH2:'ટેસ્ટ માટે પ્રોટોકોલ પસંદ કરો',testModeP:'8 મૉડ્યૂલ્સ માંથી ત્રણ ઉદાહરણ',ucHdrSub:'ઉદાહરણ પસંદ કરો',ucLoadBtn:'લોડ & વિશ્લેષણ',apiNotice:'<strong>Run Protocol</strong> ક્લિક કરો, Claude AI ચિટ્ઠામાં પ્રતિ સ્ક્રીન',testLoaded:'ટેસ્ટ લોડ — તૈયાર',dropTitle:'ફાઈલ ડ્રૉ પ કરો',dropSub:'ડ્રૅગ & ડ્રૉ પ',quickExamples:'ઝડ પ ઉ દ ાહ ર ણ',runProtocol:'પ્રોટોકૉલ ચ ળ ુ ક ૃ /',clear:'ક ળ ી ','analyzing':'ન ્ ય ૂ ર ળ ?..',analyzingP:'5-10 ?, .',confidence:'?',forensicFindings:'?',evidenceTrail:'?',cyberBtn:'cybercrime.gov.in',cyberDanger:'ખ ત ?,  ?',cyberWarn:'?',cyberSafe:'?',backAll:'?',backTest:'?',backHome:'?',pasteTab:'?',fileTab:'?',urlTab:'? URL',toastLoaded:'?',toastEmpty:'?',toastDone:'?',toastFailed:'?',fileLoaded:'?',fileReplace:'?',fileDefault:'?',fileDefaultSub:'?'},
+  kn:{status:'ನ್ಯೂರಲ್ ಕೋರ್ ಪ್ರೋಟೋಕಾಲ್: ಸಕ್ರಿಯ',heroTag:'ನ್ಯೂರಲ್ ಕೋರ್ ಪ್ರೋಟೋಕಾಲ್: ಸಕ್ರಿಯ',heroH1:'ಡಿಜಿಟಲ್ ಮೋಸವನ್ನು <span class="accent">ಬಯಲಿಗೆಳೆಯಿರಿ.</span>',heroSub:'ಆಧುನಿಕ ವೆಬ್‌ಗಾಗಿ ಸುಧಾರಿತ ಫೋರೆನ್ಸಿಕ್ ಆಡಿಟಿಂಗ್.',statProtocols:'ಪ್ರೋಟೋಕಾಲ್‌ಗಳು',statAccuracy:'ನಿಖರತೆ',statAnalysis:'ವಿಶ್ಲೇಷಣೆ',statErrors:'ದೋಷಗಳು',testBtn:'ಪರೀಕ್ಷಾ ಡೇಟಾ ಬಳಸಿ ಪ್ರಯತ್ನಿಸಿ',missionTag:'ಸ್ಟೇಶನ್_ಮಿಷನ್',missionH2:'ಮೋಸದ ವಿರುದ್ಧ ನ್ಯೂರಲ್ ತಡೆ.',missionP1:'ThreatLens ಒಂದು ಸುಧಾರಿತ ಡಿಜಿಟಲ್ ರಕ್ಷಣಾ ಕೇಂದ್ರ.',missionP2:'ಇಮೇಲ್, URL, ಡೀಪ್‌ಫೇಕ್ ಮತ್ತು ವಾಯ್ಸ್ ಕ್ಲೋನ್‌ಗಳಲ್ಲಿ ಮರೆಮಾಚಿದ ಮೋಸವನ್ನು ನಾಶಮಾಡಿ.',missionQuote:'ಪ್ರತಿ AI ತೀರ್ಪಿನ "ಫೋರೆನ್ಸಿಕ್ ಟ್ರೈಲ್" ತೋರಿಸುತ್ತೇವೆ.',feat1Title:'ನ್ಯೂರಲ್ ಫೋರೆನ್ಸಿಕ್ ಹಬ್',feat1Desc:'ಕ್ರಾಸ್-ಪ್ಲ್ಯಾಟ್‌ಫಾರ್ಮ್ ವಿಶ್ಲೇಷಣೆ.',feat2Title:'ವಿವರಣಾತ್ಮಕ ಬುದ್ಧಿ',feat2Desc:'ರಿಯಲ್-ಟೈಮ್ ಮೆಟಾಡೇಟಾ ಲಾಗ್‌ಗಳು.',feat3Title:'ಶೂನ್ಯ ವೈಫಲ್ಯ',feat3Desc:'API ರೂಟಿಂಗ್ ಸ್ಥಳೀಯವಾಗಿ.',selectProtocol:'ವಿಶ್ಲೇಷಣೆ ಪ್ರಾರಂಭಿಸಲು ಪ್ರೋಟೋಕಾಲ್ ಆಯ್ಕೆಮಾಡಿ',testModeTag:'ಪರೀಕ್ಷಾ ಮೋಡ್',testModeH2:'ಪರೀಕ್ಷಿಸಲು ಪ್ರೋಟೋಕಾಲ್ ಆಯ್ಕೆಮಾಡಿ',testModeP:'8 ಮಾಡ್ಯೂಲ್‌ಗಳಲ್ಲಿ ಯಾವುದಾದರೂ ಒಂದನ್ನು ಆಯ್ಕೆಮಾಡಿ.',ucHdrSub:'ಬಳಕೆ ಪ್ರಕರಣ ಆಯ್ಕೆಮಾಡಿ',ucLoadBtn:'ಲೋಡ್ ಮಾಡಿ & ವಿಶ್ಲೇಷಿಸಿ',apiNotice:'<strong>Run Protocol</strong> ಕ್ಲಿಕ್ ಮಾಡಿ.',testLoaded:'ಪರೀಕ್ಷಾ ಪ್ರಕರಣ ಲೋಡ್',dropTitle:'ಇಲ್ಲಿ ಫೈಲ್ ಡ್ರಾಪ್ ಮಾಡಿ',dropSub:'ಡ್ರ್ಯಾಗ್ & ಡ್ರಾಪ್ ಬೆಂಬಲ',quickExamples:'ತ್ವರಿತ ಉದಾಹರಣೆಗಳು',runProtocol:'ಪ್ರೋಟೋಕಾಲ್ ಚಲಾಯಿಸಿ',clear:'ತೆರವು',analyzing:'ನ್ಯೂರಲ್ ವಿಶ್ಲೇಷಣೆ',analyzingP:'ಸಂಸ್ಕರಣೆ... 5-10 ಸೆಕೆಂಡ್‌ಗಳು.',confidence:'ವಿಶ್ವಾಸ',forensicFindings:'ಫೋರೆನ್ಸಿಕ್ ಸಂಶೋಧನೆ',evidenceTrail:'ಸಾಕ್ಷ್ಯ ಮಾರ್ಗ',cyberBtn:'ಸೈಬರ್ ಕ್ರೈಮ್ ಪೋರ್ಟಲ್ — cybercrime.gov.in',cyberDanger:'ಬೆದರಿಕೆ ಪತ್ತೆ — ತಕ್ಷಣ ವರದಿ ಮಾಡಿ',cyberWarn:'ಅನುಮಾನಾಸ್ಪದ — ವರದಿ ಮಾಡಿ',cyberSafe:'ಯಾವುದೇ ಬೆದರಿಕೆ ಇಲ್ಲ',backAll:'ಎಲ್ಲ ಪ್ರೋಟೋಕಾಲ್‌ಗಳು',backTest:'ಪರೀಕ್ಷಾ ಪ್ರಕರಣಗಳಿಗೆ',backHome:'ಹೋಮ್‌ಗೆ',pasteTab:'ಪಠ್ಯ ಅಂಟಿಸಿ',fileTab:'ಫೈಲ್ ಅಪ್‌ಲೋಡ್',urlTab:'URL ನಮೂದಿಸಿ',toastLoaded:'ಉದಾಹರಣೆ ಲೋಡ್',toastEmpty:'ವಿಷಯ ನಮೂದಿಸಿ',toastDone:'ವಿಶ್ಲೇಷಣೆ ಪೂರ್ಣ',toastFailed:'ವಿಶ್ಲೇಷಣೆ ವಿಫಲ',fileLoaded:'ಫೈಲ್ ಲೋಡ್ ಆಗಿದೆ',fileReplace:'ಬದಲಾಯಿಸಲು ಕ್ಲಿಕ್ ಮಾಡಿ',fileDefault:'ಇಲ್ಲಿ ಫೈಲ್ ಡ್ರಾಪ್ ಮಾಡಿ',fileDefaultSub:'ಡ್ರ್ಯಾಗ್ & ಡ್ರಾಪ್ ಬೆಂಬಲ'},
+  pa:{status:'ਨਿਊਰਲ ਕੋਰ ਪ੍ਰੋਟੋਕੋਲ: ਸਰਗਰਮ',heroTag:'ਨਿਊਰਲ ਕੋਰ ਪ੍ਰੋਟੋਕੋਲ: ਸਰਗਰਮ',heroH1:'ਡਿਜੀਟਲ ਧੋਖੇ ਨੂੰ <span class="accent">ਉਜਾਗਰ ਕਰੋ।</span>',heroSub:'ਆਧੁਨਿਕ ਵੈੱਬ ਲਈ ਉੱਨਤ ਫੋਰੈਂਸਿਕ ਆਡਿਟਿੰਗ।',statProtocols:'ਪ੍ਰੋਟੋਕੋਲ',statAccuracy:'ਸ਼ੁੱਧਤਾ',statAnalysis:'ਵਿਸ਼ਲੇਸ਼ਣ',statErrors:'ਗਲਤੀਆਂ',testBtn:'ਟੈਸਟ ਡੇਟਾ ਵਰਤੋ',missionTag:'ਸਟੇਸ਼ਨ_ਮਿਸ਼ਨ',missionH2:'ਧੋਖੇ ਵਿਰੁੱਧ ਨਿਊਰਲ ਰੁਕਾਵਟ।',missionP1:'ThreatLens ਇੱਕ ਉੱਨਤ ਡਿਜੀਟਲ ਸੁਰੱਖਿਆ ਕੇਂਦਰ ਹੈ।',missionP2:'ਈਮੇਲ, URL, ਡੀਪਫੇਕ ਅਤੇ ਵੌਇਸ ਕਲੋਨ ਵਿੱਚ ਧੋਖੇ ਨੂੰ ਤਬਾਹ ਕਰੋ।',missionQuote:'ਅਸੀਂ ਹਰ AI ਫੈਸਲੇ ਦੀ "ਫੋਰੈਂਸਿਕ ਟ੍ਰੇਲ" ਦਿਖਾਉਂਦੇ ਹਾਂ।',feat1Title:'ਨਿਊਰਲ ਫੋਰੈਂਸਿਕ ਹੱਬ',feat1Desc:'ਕਰਾਸ-ਪਲੇਟਫਾਰਮ ਵਿਸ਼ਲੇਸ਼ਣ।',feat2Title:'ਸਮਝਾਉਣ ਯੋਗ ਬੁੱਧੀ',feat2Desc:'ਰੀਅਲ-ਟਾਈਮ ਮੈਟਾਡੇਟਾ ਲੌਗ।',feat3Title:'ਜ਼ੀਰੋ ਕੁੰਜੀ ਅਸਫਲਤਾਵਾਂ',feat3Desc:'ਕੋਈ ਕ੍ਰੀਡੈਂਸ਼ੀਅਲ ਉਜਾਗਰ ਨਹੀਂ।',selectProtocol:'ਵਿਸ਼ਲੇਸ਼ਣ ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਪ੍ਰੋਟੋਕੋਲ ਚੁਣੋ',testModeTag:'ਟੈਸਟ ਮੋਡ',testModeH2:'ਟੈਸਟ ਲਈ ਪ੍ਰੋਟੋਕੋਲ ਚੁਣੋ',testModeP:'8 ਮੋਡਿਊਲਾਂ ਵਿੱਚੋਂ ਕੋਈ ਇੱਕ ਚੁਣੋ।',ucHdrSub:'ਉਪਯੋਗ ਕੇਸ ਚੁਣੋ',ucLoadBtn:'ਲੋਡ ਕਰੋ & ਵਿਸ਼ਲੇਸ਼ਣ ਕਰੋ',apiNotice:'<strong>Run Protocol</strong> ਕਲਿੱਕ ਕਰੋ।',testLoaded:'ਟੈਸਟ ਕੇਸ ਲੋਡ',dropTitle:'ਇੱਥੇ ਫਾਈਲ ਸੁੱਟੋ',dropSub:'ਡ੍ਰੈਗ ਅਤੇ ਡ੍ਰੌਪ',quickExamples:'ਤੇਜ਼ ਉਦਾਹਰਣਾਂ',runProtocol:'ਪ੍ਰੋਟੋਕੋਲ ਚਲਾਓ',clear:'ਸਾਫ਼ ਕਰੋ',analyzing:'ਨਿਊਰਲ ਵਿਸ਼ਲੇਸ਼ਣ',analyzingP:'ਪ੍ਰੋਸੈਸਿੰਗ... 5-10 ਸਕਿੰਟ।',confidence:'ਵਿਸ਼ਵਾਸ',forensicFindings:'ਫੋਰੈਂਸਿਕ ਖੋਜਾਂ',evidenceTrail:'ਸਬੂਤ ਟ੍ਰੇਲ',cyberBtn:'ਭਾਰਤ ਸਾਈਬਰ ਕ੍ਰਾਈਮ ਪੋਰਟਲ — cybercrime.gov.in',cyberDanger:'ਖ਼ਤਰਾ ਮਿਲਿਆ — ਤੁਰੰਤ ਰਿਪੋਰਟ ਕਰੋ',cyberWarn:'ਸ਼ੱਕੀ ਸਮੱਗਰੀ — ਰਿਪੋਰਟ ਕਰੋ',cyberSafe:'ਕੋਈ ਖ਼ਤਰਾ ਨਹੀਂ',backAll:'ਸਾਰੇ ਪ੍ਰੋਟੋਕੋਲ',backTest:'ਟੈਸਟ ਕੇਸਾਂ ਤੇ ਵਾਪਸ',backHome:'ਹੋਮ ਤੇ ਵਾਪਸ',pasteTab:'ਟੈਕਸਟ ਪੇਸਟ ਕਰੋ',fileTab:'ਫਾਈਲ ਅੱਪਲੋਡ ਕਰੋ',urlTab:'URL ਦਰਜ ਕਰੋ',toastLoaded:'ਉਦਾਹਰਣ ਲੋਡ',toastEmpty:'ਸਮੱਗਰੀ ਦਰਜ ਕਰੋ',toastDone:'ਵਿਸ਼ਲੇਸ਼ਣ ਮੁਕੰਮਲ',toastFailed:'ਵਿਸ਼ਲੇਸ਼ਣ ਅਸਫਲ',fileLoaded:'ਫਾਈਲ ਲੋਡ ਹੋਈ',fileReplace:'ਬਦਲਣ ਲਈ ਕਲਿੱਕ ਕਰੋ',fileDefault:'ਇੱਥੇ ਫਾਈਲ ਸੁੱਟੋ',fileDefaultSub:'ਡ੍ਰੈਗ ਅਤੇ ਡ੍ਰੌਪ'},
+  ur:{status:'نیورل کور پروٹوکول: فعال',heroTag:'نیورل کور پروٹوکول: فعال',heroH1:'ڈیجیٹل دھوکے کو <span class="accent">بے نقاب کریں۔</span>',heroSub:'جدید ویب کے لیے جدید فرانزک آڈیٹنگ۔',statProtocols:'پروٹوکول',statAccuracy:'درستگی',statAnalysis:'تجزیہ',statErrors:'خرابیاں',testBtn:'ٹیسٹ ڈیٹا استعمال کریں',missionTag:'اسٹیشن_مشن',missionH2:'دھوکے کے خلاف نیورل رکاوٹ۔',missionP1:'ThreatLens ایک جدید ڈیجیٹل دفاعی مرکز ہے۔',missionP2:'ای میل، URL، ڈیپ فیک اور وائس کلون میں چھپے دھوکے کو تباہ کریں۔',missionQuote:'ہم ہر AI فیصلے کا فرانزک ٹریل دکھاتے ہیں۔',feat1Title:'نیورل فرانزک ہب',feat1Desc:'کراس پلیٹ فارم تجزیہ۔',feat2Title:'قابل وضاحت ذہانت',feat2Desc:'ریئل ٹائم میٹا ڈیٹا لاگ۔',feat3Title:'صفر کلیدی خرابیاں',feat3Desc:'API روٹنگ مقامی طور پر۔',selectProtocol:'تجزیہ شروع کرنے کے لیے پروٹوکول منتخب کریں',testModeTag:'ٹیسٹ موڈ',testModeH2:'ٹیسٹ کے لیے پروٹوکول منتخب کریں',testModeP:'8 ماڈیولز میں سے کوئی بھی منتخب کریں۔',ucHdrSub:'استعمال کا معاملہ منتخب کریں',ucLoadBtn:'لوڈ کریں اور تجزیہ کریں',apiNotice:'<strong>Run Protocol</strong> پر کلک کریں۔',testLoaded:'ٹیسٹ کیس لوڈ',dropTitle:'یہاں فائل ڈراپ کریں',dropSub:'ڈریگ اور ڈراپ',quickExamples:'فوری مثالیں',runProtocol:'پروٹوکول چلائیں',clear:'صاف کریں',analyzing:'نیورل تجزیہ جاری ہے',analyzingP:'پروسیسنگ... 5-10 سیکنڈ۔',confidence:'اعتماد',forensicFindings:'فرانزک نتائج',evidenceTrail:'ثبوت کا راستہ',cyberBtn:'سائبر کرائم پورٹل — cybercrime.gov.in',cyberDanger:'خطرہ ملا — فوری رپورٹ کریں',cyberWarn:'مشکوک مواد — رپورٹ کریں',cyberSafe:'کوئی خطرہ نہیں',backAll:'تمام پروٹوکول',backTest:'ٹیسٹ کیسز پر واپس',backHome:'ہوم پر واپس',pasteTab:'متن پیسٹ کریں',fileTab:'فائل اپلوڈ کریں',urlTab:'URL درج کریں',toastLoaded:'مثال لوڈ',toastEmpty:'مواد درج کریں',toastDone:'تجزیہ مکمل',toastFailed:'تجزیہ ناکام',fileLoaded:'فائل لوڈ ہو گئی',fileReplace:'تبدیل کرنے کے لیے کلک کریں',fileDefault:'یہاں فائل ڈراپ کریں',fileDefaultSub:'ڈریگ اور ڈراپ'},
+  ar:{status:'البروتوكول العصبي: نشط',heroTag:'البروتوكول العصبي: نشط',heroH1:'كشف <span class="accent">الخداع الرقمي.</span>',heroSub:'تدقيق جنائي متقدم للويب الحديث.',statProtocols:'البروتوكولات',statAccuracy:'الدقة',statAnalysis:'التحليل',statErrors:'الأخطاء',testBtn:'استخدم بيانات الاختبار لترى كيف يعمل',missionTag:'مهمة_المحطة',missionH2:'الحاجز العصبي ضد الاحتيال.',missionP1:'ThreatLens مركز دفاع رقمي متقدم.',missionP2:'نكشف الخداع في رسائل البريد الإلكتروني وعناوين URL والتزييف.',missionQuote:'نُظهر "المسار الجنائي" لكل حكم صادر عن الذكاء الاصطناعي.',feat1Title:'مركز التحقيق العصبي',feat1Desc:'تحليل عبر المنصات.',feat2Title:'ذكاء قابل للتفسير',feat2Desc:'سجلات البيانات الوصفية في الوقت الفعلي.',feat3Title:'صفر إخفاقات',feat3Desc:'توجيه API محلياً.',selectProtocol:'اختر بروتوكولاً لبدء التحليل',testModeTag:'وضع الاختبار',testModeH2:'اختر بروتوكولاً للاختبار',testModeP:'اختر أياً من 8 وحدات للحصول على 3 أمثلة.',ucHdrSub:'اختر حالة استخدام للتحميل',ucLoadBtn:'تحميل وتحليل',apiNotice:'بعد النقر على <strong>Run Protocol</strong>، يُرسل التحليل إلى Claude AI.',testLoaded:'تم تحميل حالة الاختبار',dropTitle:'أسقط ملفك هنا أو انقر',dropSub:'السحب والإفلات مدعوم',quickExamples:'أمثلة سريعة',runProtocol:'تشغيل البروتوكول',clear:'مسح',analyzing:'التحليل العصبي جارٍ',analyzingP:'المعالجة... 5-10 ثوانٍ عادةً.',confidence:'الثقة',forensicFindings:'النتائج الجنائية',evidenceTrail:'مسار الأدلة',cyberBtn:'الإبلاغ لبوابة الجرائم الإلكترونية — cybercrime.gov.in',cyberDanger:'تم اكتشاف تهديد — أبلغ فوراً',cyberWarn:'محتوى مشبوه — يمكنك الإبلاغ',cyberSafe:'لا تهديد — يمكنك الإبلاغ عند الحاجة',backAll:'جميع البروتوكولات',backTest:'العودة إلى حالات الاختبار',backHome:'العودة للرئيسية',pasteTab:'لصق النص',fileTab:'رفع ملف',urlTab:'إدخال رابط',toastLoaded:'مثال محمّل — انقر تشغيل',toastEmpty:'أدخل محتوى للتحليل',toastDone:'اكتمل التحليل',toastFailed:'فشل التحليل — أعد المحاولة',fileLoaded:'تم تحميل الملف',fileReplace:'انقر للاستبدال',fileDefault:'أسقط ملفك هنا أو انقر للتصفح',fileDefaultSub:'السحب والإفلات مدعوم'},
+  fr:{status:'Protocole Neural: Actif',heroTag:'Protocole Neural: Actif',heroH1:'Démasquer la <span class="accent">Tromperie Numérique.</span>',heroSub:'Audit forensique avancé pour le web moderne.',statProtocols:'Protocoles',statAccuracy:'Précision',statAnalysis:'Analyse',statErrors:'Erreurs',testBtn:'Utilisez les données de test pour voir comment ça fonctionne',missionTag:'Station_Mission',missionH2:'La barrière neurale contre la fraude.',missionP1:'ThreatLens est un centre de défense numérique avancé.',missionP2:'Nous détruisons les tromperies cachées dans les emails, URLs, deepfakes et clones vocaux.',missionQuote:'Nous montrons la "Piste Forensique" qui informe chaque verdict de l\'IA.',feat1Title:'Hub Forensique Neural',feat1Desc:'Analyse multiplateforme.',feat2Title:'Intelligence Explicable',feat2Desc:'Journaux de métadonnées en temps réel.',feat3Title:'Zéro Échec de Clé',feat3Desc:'Routage API géré nativement.',selectProtocol:'Sélectionnez un protocole pour commencer',testModeTag:'Mode Test — Sandbox',testModeH2:'Choisissez un protocole à tester',testModeP:'Sélectionnez l\'un des 8 modules pour obtenir 3 exemples réels.',ucHdrSub:'Sélectionnez un cas d\'usage',ucLoadBtn:'Charger & Analyser',apiNotice:'Après avoir cliqué sur <strong>Run Protocol</strong>, l\'analyse est envoyée à Claude AI.',testLoaded:'Cas de test chargé — prêt',dropTitle:'Déposez votre fichier ici ou cliquez',dropSub:'Glisser-déposer pris en charge',quickExamples:'Exemples rapides',runProtocol:'Lancer le Protocole',clear:'Effacer',analyzing:'Analyse Neurale en Cours',analyzingP:'Traitement en cours... Cela prend généralement 5 à 10 secondes.',confidence:'Confiance',forensicFindings:'Résultats Forensiques',evidenceTrail:'Piste de Preuves',cyberBtn:'Signaler au Portail Cybercriminalité — cybercrime.gov.in',cyberDanger:'Menace détectée — signalez immédiatement',cyberWarn:'Contenu suspect — vous pouvez signaler',cyberSafe:'Aucune menace — vous pouvez quand même signaler',backAll:'Tous les Protocoles',backTest:'Retour aux cas de test',backHome:'Retour à l\'accueil',pasteTab:'Coller le texte',fileTab:'Télécharger un fichier',urlTab:'Entrer l\'URL',toastLoaded:'Exemple chargé',toastEmpty:'Entrez du contenu à analyser',toastDone:'Analyse complète',toastFailed:'Analyse échouée — réessayez',fileLoaded:'Fichier chargé avec succès',fileReplace:'Cliquez pour remplacer',fileDefault:'Déposez votre fichier ici ou cliquez',fileDefaultSub:'Glisser-déposer pris en charge'},
+  de:{status:'Neurales Kernprotokoll: Aktiv',heroTag:'Neurales Kernprotokoll: Aktiv',heroH1:'Digitale <span class="accent">Täuschung aufdecken.</span>',heroSub:'Fortgeschrittene forensische Prüfung für das moderne Web.',statProtocols:'Protokolle',statAccuracy:'Genauigkeit',statAnalysis:'Analyse',statErrors:'Fehler',testBtn:'Testdaten verwenden und sehen wie es funktioniert',missionTag:'Station_Mission',missionH2:'Die neurale Barriere gegen Betrug.',missionP1:'ThreatLens ist ein fortschrittliches digitales Verteidigungszentrum.',missionP2:'Wir zerstören in E-Mails, URLs, Deepfakes und Stimmklonen versteckten Betrug.',missionQuote:'Wir zeigen den "Forensischen Pfad" hinter jedem KI-Urteil.',feat1Title:'Neuraler Forensik-Hub',feat1Desc:'Plattformübergreifende Analyse.',feat2Title:'Erklärbare Intelligenz',feat2Desc:'Echtzeit-Metadaten-Protokolle.',feat3Title:'Null Schlüsselfehler',feat3Desc:'API-Routing nativ verwaltet.',selectProtocol:'Protokoll für die Analyse auswählen',testModeTag:'Testmodus',testModeH2:'Protokoll zum Testen auswählen',testModeP:'Wähle ein Modul aus 8. Du bekommst 3 Beispiele.',ucHdrSub:'Anwendungsfall auswählen',ucLoadBtn:'Laden & Analysieren',apiNotice:'Nach dem Klick auf <strong>Run Protocol</strong> wird die Analyse an Claude AI gesendet.',testLoaded:'Testfall geladen',dropTitle:'Datei hier ablegen oder klicken',dropSub:'Drag & Drop unterstützt',quickExamples:'Schnellbeispiele',runProtocol:'Protokoll starten',clear:'Löschen',analyzing:'Neurale Analyse läuft',analyzingP:'Verarbeitung... Dauert 5–10 Sekunden.',confidence:'Konfidenz',forensicFindings:'Forensische Befunde',evidenceTrail:'Beweispfad',cyberBtn:'Cyberkriminalitätsportal melden — cybercrime.gov.in',cyberDanger:'Bedrohung erkannt — sofort melden',cyberWarn:'Verdächtiger Inhalt — melden',cyberSafe:'Keine Bedrohung',backAll:'Alle Protokolle',backTest:'Zurück zu Testfällen',backHome:'Zurück zur Startseite',pasteTab:'Text einfügen',fileTab:'Datei hochladen',urlTab:'URL eingeben',toastLoaded:'Beispiel geladen',toastEmpty:'Inhalt eingeben',toastDone:'Analyse abgeschlossen',toastFailed:'Analyse fehlgeschlagen',fileLoaded:'Datei geladen',fileReplace:'Zum Ersetzen klicken',fileDefault:'Datei ablegen oder klicken',fileDefaultSub:'Drag & Drop'},
+  es:{status:'Protocolo Neural: Activo',heroTag:'Protocolo Neural: Activo',heroH1:'Desenmascarando el <span class="accent">Engaño Digital.</span>',heroSub:'Auditoría forense avanzada para la web moderna.',statProtocols:'Protocolos',statAccuracy:'Precisión',statAnalysis:'Análisis',statErrors:'Errores',testBtn:'Usa datos de prueba para ver cómo funciona',missionTag:'Estación_Misión',missionH2:'La barrera neural contra el fraude.',missionP1:'ThreatLens es un centro de defensa digital avanzado.',missionP2:'Destruimos engaños ocultos en correos electrónicos, URLs, deepfakes y clones de voz.',missionQuote:'Mostramos el "Rastro Forense" que informa cada veredicto de IA.',feat1Title:'Centro Forense Neural',feat1Desc:'Análisis multiplataforma.',feat2Title:'Inteligencia Explicable',feat2Desc:'Registros de metadatos en tiempo real.',feat3Title:'Cero Fallos de Clave',feat3Desc:'Enrutamiento API gestionado nativamente.',selectProtocol:'Selecciona un protocolo para comenzar',testModeTag:'Modo de prueba',testModeH2:'Elige un protocolo para probar',testModeP:'Selecciona cualquiera de los 8 módulos para obtener 3 ejemplos reales.',ucHdrSub:'Selecciona un caso de uso',ucLoadBtn:'Cargar y Analizar',apiNotice:'Tras hacer clic en <strong>Run Protocol</strong>, el análisis se envía a Claude AI.',testLoaded:'Caso de prueba cargado',dropTitle:'Suelta tu archivo aquí o haz clic',dropSub:'Arrastrar y soltar admitido',quickExamples:'Ejemplos rápidos',runProtocol:'Ejecutar Protocolo',clear:'Limpiar',analyzing:'Análisis Neural en Progreso',analyzingP:'Procesando... Suele tardar 5–10 segundos.',confidence:'Confianza',forensicFindings:'Hallazgos Forenses',evidenceTrail:'Rastro de Evidencia',cyberBtn:'Reportar al Portal de Cibercrimen — cybercrime.gov.in',cyberDanger:'Amenaza detectada — reporta inmediatamente',cyberWarn:'Contenido sospechoso — puedes reportar',cyberSafe:'Sin amenaza detectada',backAll:'Todos los Protocolos',backTest:'Volver a casos de prueba',backHome:'Volver al inicio',pasteTab:'Pegar texto',fileTab:'Subir archivo',urlTab:'Ingresar URL',toastLoaded:'Ejemplo cargado',toastEmpty:'Ingresa contenido para analizar',toastDone:'Análisis completo',toastFailed:'Análisis fallido — intenta de nuevo',fileLoaded:'Archivo cargado',fileReplace:'Haz clic para reemplazar',fileDefault:'Suelta tu archivo aquí o haz clic',fileDefaultSub:'Arrastrar y soltar'},
+  zh:{status:'神经核心协议：激活',heroTag:'神经核心协议：激活',heroH1:'揭露数字<span class="accent">欺骗。</span>',heroSub:'面向现代网络的先进取证审计。以绝对透明度进行神经验证。',statProtocols:'协议',statAccuracy:'准确率',statAnalysis:'分析',statErrors:'密钥错误',testBtn:'使用测试数据查看其工作原理',missionTag:'站点_使命',missionH2:'对抗欺诈的神经屏障。',missionP1:'ThreatLens 是先进的数字防御中心。在人工合成媒体时代，提供通信验证的坚不可摧的防线。',missionP2:'我们摧毁隐藏在电子邮件、恶意URL、病毒式错误信息、深度伪造和语音克隆中的欺骗。',missionQuote:'我们展示每个AI判断背后的"取证线索"。',feat1Title:'神经取证中心',feat1Desc:'跨平台通信流启发式分析。',feat2Title:'可解释智能',feat2Desc:'每次神经解析的实时元数据日志。',feat3Title:'零密钥失败',feat3Desc:'API路由原生处理——不暴露凭证。',selectProtocol:'选择协议开始分析',testModeTag:'测试模式 — 神经沙盒',testModeH2:'选择要测试的协议',testModeP:'从8个模块中选择任意一个，获取3个真实用例示例。',ucHdrSub:'选择一个用例加载到分析器',ucLoadBtn:'加载并分析',apiNotice:'点击 <strong>运行协议</strong> 后，分析请求将发送至 Claude AI。',testLoaded:'测试用例已加载 — 准备就绪',dropTitle:'拖放文件或点击此处',dropSub:'支持拖放',quickExamples:'快速示例',runProtocol:'运行协议',clear:'清除',analyzing:'神经分析进行中',analyzingP:'通过取证引擎处理中… 通常需要5-10秒。',confidence:'置信度',forensicFindings:'取证发现',evidenceTrail:'证据轨迹',cyberBtn:'向印度网络犯罪门户举报 — cybercrime.gov.in',cyberDanger:'发现威胁 — 请立即举报',cyberWarn:'发现可疑内容 — 可向网络犯罪门户举报',cyberSafe:'未发现威胁 — 仍可向门户举报',backAll:'所有协议',backTest:'返回测试用例',backHome:'返回首页',pasteTab:'粘贴文本',fileTab:'上传文件',urlTab:'输入URL',toastLoaded:'示例已加载 — 点击运行协议',toastEmpty:'请输入或上传要分析的内容',toastDone:'神经分析完成',toastFailed:'分析失败 — 请重试',fileLoaded:'文件加载成功',fileReplace:'点击替换文件',fileDefault:'拖放文件或点击浏览',fileDefaultSub:'支持拖放'},
+};
 
-        async function geminiCall(prompt) {
-            const payload = {
-                contents: [{ parts: [{ text: prompt }] }],
-                generationConfig: {
-                    responseMimeType: "application/json",
-                    responseSchema: {
-                        type: "OBJECT",
-                        properties: {
-                            status: { type: "STRING", enum: ["safe", "suspicious", "fraud"] },
-                            domain_name: { type: "STRING" },
-                            purpose: { type: "STRING" },
-                            trust_index: { type: "NUMBER" },
-                            owner: { type: "STRING" },
-                            tech_audit: { type: "ARRAY", items: { type: "OBJECT", properties: { part: { type: "STRING" }, score: { type: "NUMBER" } } } },
-                            detail_1: { type: "STRING" },
-                            detail_2: { type: "STRING" },
-                            detail_3: { type: "STRING" },
-                            detail_4: { type: "STRING" },
-                            confidence: { type: "NUMBER" },
-                            summary: { type: "STRING" },
-                            education: { type: "STRING" },
-                            tactical_advice: { type: "ARRAY", items: { type: "STRING" } }
-                        },
-                        required: ["status", "trust_index", "summary", "education", "tactical_advice"]
-                    }
-                }
-            };
-            const response = await fetch(BASE_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-            const data = await response.json();
-            return JSON.parse(data.candidates[0].content.parts[0].text);
-        }
+// Fill in missing keys from English
+Object.keys(TRANSLATIONS).forEach(lang => {
+  if(lang==='en') return;
+  Object.keys(TRANSLATIONS.en).forEach(k => {
+    if(!TRANSLATIONS[lang][k]) TRANSLATIONS[lang][k]=TRANSLATIONS.en[k];
+  });
+});
 
-        function showView(viewName) {
-            const home = document.getElementById('view-home');
-            const module = document.getElementById('module-view');
-            const nav = document.getElementById('main-nav');
-            const container = document.getElementById('module-container');
-            
-            if (viewName === 'home') {
-                home.classList.remove('hidden');
-                module.classList.add('hidden');
-                nav.classList.remove('hidden');
-            } else {
-                home.classList.add('hidden');
-                module.classList.remove('hidden');
-                nav.classList.add('hidden'); 
-                renderModule(viewName, container);
-            }
-            window.scrollTo(0, 0);
-            refreshIcons();
-        }
+let currentLang = 'en';
 
-        function renderModule(name, container) {
-            const isEmail = name === 'email';
-            const isSocial = name === 'social';
-            const isArticle = name === 'article';
-            const isWeb = name === 'web';
-            const isPayload = name === 'payload';
+function t(key){ return TRANSLATIONS[currentLang]?.[key] || TRANSLATIONS.en[key] || key; }
 
-            let protocolName = "Forensic Engine";
-            let placeholder = "Paste content...";
-            let workspace = "";
+function buildLangMenu(){
+  const dd = document.getElementById('langDropdown');
+  dd.innerHTML = '';
+  LANGUAGES.forEach(l => {
+    const opt = document.createElement('div');
+    opt.className = 'lang-opt' + (l.code===currentLang?' active':'');
+    opt.addEventListener('click', function(e){
+      e.stopPropagation();
+      setLang(l.code);
+    });
+    opt.innerHTML = `<span class="lang-opt-flag">${l.flag}</span><span class="lang-opt-name">${l.name}</span><span class="lang-opt-native">${l.native}</span>`;
+    dd.appendChild(opt);
+  });
+}
 
-            if (isEmail) {
-                protocolName = "Email Forensic";
-                placeholder = "Paste email content or headers...";
-                workspace = generateSplitWorkspace(name, placeholder, "Upload Source");
-            } else if (isSocial) {
-                protocolName = "Post Audit";
-                placeholder = "Paste social post link or text...";
-                workspace = generateSplitWorkspace(name, placeholder, "Upload Image/Post");
-            } else if (isArticle) {
-                protocolName = "Truth Check";
-                placeholder = "Paste article body text...";
-                workspace = generateSplitWorkspace(name, placeholder, "Upload Article Photo");
-            } else if (isPayload) {
-                protocolName = "Payload Sentry";
-                workspace = `
-                    <div class="w-full bg-white/[0.05] p-12 border-2 border-white/20 shadow-xl flex flex-col rounded-sm mb-12 items-center justify-center text-center">
-                        <span class="meta-tag text-[9px] mb-6 !text-white/40 italic">001_Secure_Dropzone</span>
-                        <div class="mb-8"><i data-lucide="shield-check" class="w-16 h-16 text-white/20 mb-4 mx-auto"></i></div>
-                        <label class="bg-white text-black px-12 py-5 rounded-sm font-black uppercase tracking-widest text-[11px] hover:bg-blue-600 hover:text-white transition-all shadow-xl cursor-pointer flex items-center justify-center mb-8">
-                            Select_File_to_Scan
-                            <input type="file" id="file-upload" class="hidden" onchange="document.getElementById('payload-status').innerText = 'FILE_LOCKED: ' + this.files[0].name">
-                        </label>
-                        <p id="payload-status" class="text-white/40 font-mono text-[10px] uppercase italic">Awaiting Binary Input...</p>
-                        <div class="flex gap-4 mt-8 pt-8 border-t border-white/5 w-full justify-center">
-                             <button onclick="handleScan('${name}')" id="scan-btn" class="min-w-[200px] h-14 bg-white/10 text-white font-black uppercase tracking-widest text-[11px] hover:bg-blue-600 transition-all rounded-sm">Initialize_Forensic_Scan</button>
-                             <button onclick="abortScan()" id="abort-btn" class="hidden h-14 bg-red-600 text-white font-black uppercase tracking-widest text-[11px] hover:bg-red-700 transition-all flex items-center justify-center rounded-sm px-8">Abort</button>
-                        </div>
-                    </div>
-                `;
-            } else if (isWeb) {
-                protocolName = "URL Tracer";
-                placeholder = "Paste target URL or domain name...";
-                workspace = `
-                    <div class="w-full bg-white/[0.05] p-10 border-2 border-white/20 shadow-xl flex flex-col rounded-sm mb-12">
-                        <span class="meta-tag text-[9px] mb-4 !text-white/40 italic">001_URL_Entry</span>
-                        <textarea id="scan-input" class="w-full h-24 bg-transparent border-none text-white font-mono text-lg outline-none resize-none placeholder-white/20 leading-relaxed" placeholder="${placeholder}"></textarea>
-                        <div class="flex gap-4 pt-6 border-t border-white/10 mt-4">
-                            <button onclick="handleScan('${name}')" id="scan-btn" class="min-w-[200px] h-14 bg-white text-black font-black uppercase tracking-widest text-[11px] hover:bg-blue-600 hover:text-white transition-all shadow-xl flex items-center justify-center rounded-sm">Initialize_Scan</button>
-                            <button onclick="abortScan()" id="abort-btn" class="hidden h-14 bg-red-600 text-white font-black uppercase tracking-widest text-[11px] hover:bg-red-700 transition-all flex items-center justify-center rounded-sm px-8">Abort</button>
-                        </div>
-                    </div>
-                `;
-            }
+function toggleLangMenu(){
+  const dd=document.getElementById('langDropdown');
+  const bd=document.getElementById('langBackdrop');
+  const btn=document.getElementById('langBtn');
+  const rect=btn.getBoundingClientRect();
+  dd.style.top=(rect.bottom+6)+'px';
+  dd.style.right=Math.max(8,(window.innerWidth-rect.right))+'px';
+  dd.style.left='auto';
+  const isOpen=dd.classList.contains('open');
+  if(isOpen){ closeLangMenu(); } else { dd.classList.add('open'); bd.classList.add('open'); }
+}
+function closeLangMenu(){
+  document.getElementById('langDropdown').classList.remove('open');
+  document.getElementById('langBackdrop').classList.remove('open');
+}
+// Backdrop click closes menu - set via JS to avoid onclick HTML attr issues outside nav
+document.addEventListener('DOMContentLoaded',function(){
+  document.getElementById('langBackdrop').addEventListener('click', closeLangMenu);
+});
 
-            container.innerHTML = `
-                <div class="reveal">
-                    <div id="audit-terminal" class="hidden w-full bg-black p-10 border-2 border-white/20 shadow-2xl flex flex-col justify-center items-center text-center min-h-[350px] mb-12">
-                        <div class="radar mb-8"></div>
-                        <p class="meta-tag animate-pulse !text-blue-400 tracking-[0.4em] font-black uppercase mb-4">Neural_Audit_Active</p>
-                        <div class="progress-container max-w-xl mx-auto"><div id="progress-bar" class="progress-fill"></div></div>
-                        <p id="progress-val" class="font-mono text-xl text-white font-black italic">0%</p>
-                    </div>
+function setLang(code){
+  currentLang = code;
+  const lang = LANGUAGES.find(l=>l.code===code);
+  document.getElementById('langFlag').textContent = lang.flag;
+  document.getElementById('langCode').textContent = code.toUpperCase();
+  closeLangMenu();
+  document.documentElement.lang = code;
+  // RTL for Arabic/Urdu
+  document.documentElement.dir = (code==='ar'||code==='ur') ? 'rtl' : 'ltr';
+  applyTranslations();
+  buildLangMenu();
+  if(activeModule) rebuildAnalyzeUI();
+}
 
-                    <div class="mb-10">
-                        <span class="meta-tag block mb-4 text-white font-black tracking-[0.5em] text-xs italic">Protocol_Execution_${name.toUpperCase()}</span>
-                        <h2 class="text-4xl font-black tracking-tighter italic uppercase text-white leading-none">${protocolName}</h2>
-                    </div>
-                    
-                    ${workspace}
+function applyTranslations(){
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    const val = t(key);
+    if(el.tagName==='INPUT'||el.tagName==='TEXTAREA') el.placeholder = val;
+    else el.innerHTML = val;
+  });
+  // Dynamic elements
+  if(activeModule){
+    const btn = document.querySelector('.analyze-btn span[data-i18n="runProtocol"]');
+    if(btn) btn.textContent = t('runProtocol');
+  }
+  updateBackBtn();
+}
 
-                    <div id="result-anchor"></div>
-                </div>
-            `;
-            refreshIcons();
-        }
+function updateBackBtn(){
+  const lbl = document.getElementById('backLabel');
+  if(!lbl) return;
+  const cur = document.querySelector('.screen.active')?.id;
+  if(cur==='screenTest') lbl.textContent = t('backHome');
+  else if(cur==='screenAnalyze') lbl.textContent = prevScreen==='screenTest'?t('backTest'):t('backAll');
+}
 
-        function generateSplitWorkspace(name, placeholder, uploadLabel) {
-            return `
-                <div class="grid grid-cols-[1fr_200px_1fr] gap-6 mb-12">
-                    <div class="bg-white/[0.05] p-8 border-2 border-white/20 shadow-xl flex flex-col rounded-sm">
-                        <span class="meta-tag text-[9px] mb-4 !text-white/40 italic">001_Write_Source</span>
-                        <textarea id="scan-input" class="w-full h-24 bg-transparent border-none text-white font-mono text-lg outline-none resize-none placeholder-white/20 leading-relaxed" placeholder="${placeholder}"></textarea>
-                    </div>
-                    <div class="flex flex-col justify-center gap-4 px-2">
-                        <button onclick="handleScan('${name}')" id="scan-btn" class="w-full h-14 bg-white text-black font-black uppercase tracking-widest text-[11px] hover:bg-blue-600 hover:text-white transition-all shadow-xl flex items-center justify-center rounded-sm">Initialize_Scan</button>
-                        <button onclick="abortScan()" id="abort-btn" class="hidden w-full h-14 bg-red-600 text-white font-black uppercase tracking-widest text-[11px] hover:bg-red-700 transition-all flex items-center justify-center rounded-sm">Abort</button>
-                    </div>
-                    <div class="bg-white/[0.05] p-8 border-2 border-white/20 shadow-xl flex flex-col justify-center items-center text-center rounded-sm">
-                        <span class="meta-tag text-[9px] mb-4 !text-white/40 italic">002_Visual_Input</span>
-                        <label class="meta-tag !text-white/80 cursor-pointer hover:!text-blue-400 transition-colors italic border-b-2 border-white/20 pb-1 text-[11px]">
-                            ${uploadLabel}
-                            <input type="file" id="file-upload" class="hidden" onchange="document.getElementById('scan-input').value = 'SOURCE_LOCKED: ' + this.files[0].name">
-                        </label>
-                    </div>
-                </div>
-            `;
-        }
+/* ═══════════════════════════════════════════
+   MODULES
+═══════════════════════════════════════════ */
+const MODULES = [
+  {id:'email',proto:'Protocol_01',label:'Email Forensic',desc:'Neural diagnostic of communication payloads and signatures.',icClass:'ic-blue',pcClass:'pc-blue',icon:`<svg viewBox="0 0 24 24" style="width:19px;height:19px;stroke:#3b8cf5;fill:none;stroke-width:1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2,4 12,13 22,4"/></svg>`,inputModes:['paste','file'],pasteHint:'Paste full email — include From address, Subject line, and body text.',fileHint:'Upload an email file (.eml, .msg, .txt, .pdf, .mbox) for forensic analysis.',fileTypes:['.eml','.msg','.txt','.pdf','.mbox'],fileAccept:'.eml,.msg,.txt,.pdf,.mbox,text/plain,application/pdf',examples:['Nigerian prince scam','Fake bank OTP','CEO wire fraud','Delivery phishing'],fields:[['sender_analysis','Sender analysis'],['urgency_tactics','Urgency tactics'],['links_found','Links & payloads'],['spf_likely','Auth signals']],usecases:[{title:'HDFC Bank Phishing Email',data:'From: alerts@hdfc-secure-verify.com\nSubject: [URGENT] Your account blocked\n\nDear Customer,\n\nYour HDFC account has been temporarily suspended due to suspicious activity. Click the link below to verify and restore access within 24 hours or your account will be permanently closed.\n\nVerify Now: http://hdfc-secure-login.xyz/verify?token=A89Z2\n\nHDFC Bank Security Team'},{title:'CEO Wire Transfer Fraud (BEC)',data:'From: rajesh.mehta.ceo@gmail.com\nSubject: Confidential — Urgent Wire Transfer Required\n\nHi Priya,\n\nI\'m currently in a meeting and need you to process an urgent wire transfer of ₹18,00,000 to a new vendor. This is time-sensitive and must be completed before 3pm today. Do not discuss this with anyone.\n\nAcc: 9823001122, IFSC: HDFC0001234\n\nThanks,\nRajesh Mehta'},{title:'Legitimate GitHub Security Alert',data:'From: noreply@github.com\nSubject: [GitHub] A new public key was added to your account\n\nHey octocat,\n\nA new public SSH key was added to your GitHub account.\n\nKey fingerprint: SHA256:uNiVztksCsDhcc0u9e8BujQXVUpKZIDTMczCvj3tD2s\n\nIf this was you, you can ignore this email. If not, remove the key at github.com/settings/keys'}],prompt:(c)=>`You are a senior cybersecurity analyst. Analyze this email for phishing, malware, BEC fraud, or spoofing.\n\nEmail:\n---\n${c}\n---\n\nReturn ONLY valid JSON:\n{"verdict":"Safe|Suspicious|Malicious","confidence":85,"summary":"2-3 sentences.","findings":["f1","f2","f3"],"sender_analysis":"...","urgency_tactics":"...","links_found":"...","spf_likely":"...","action":"..."}`},
+  {id:'url',proto:'Protocol_02',label:'URL Tracer',desc:'Domain reputation auditing and integrity mapping.',icClass:'ic-cyan',pcClass:'pc-cyan',icon:`<svg viewBox="0 0 24 24" style="width:19px;height:19px;stroke:#00d4ff;fill:none;stroke-width:1.8"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`,inputModes:['url'],urlHint:'Paste any full URL or domain. Works on shortened links, suspicious domains, and redirect chains.',examples:['paypa1-secure.xyz','bit.ly/freephone2024','amaz0n-login.ru','fake-hdfc-bank.com'],fields:[['domain_analysis','Domain analysis'],['typosquat','Typosquatting check'],['ssl_note','SSL assessment'],['risk_level','Risk level']],usecases:[{title:'PayPal Typosquatting Domain',data:'https://paypa1-secure-verification.xyz/login?redirect=account'},{title:'Shortened Malware Link',data:'https://bit.ly/3xK9mPQ'},{title:'Legitimate Government URL',data:'https://www.incometax.gov.in/iec/foportal/'}],prompt:(c)=>`You are a web threat intelligence analyst. Analyze this URL.\n\nURL: ${c}\n\nReturn ONLY valid JSON:\n{"verdict":"Safe|Suspicious|Malicious","confidence":80,"summary":"...","findings":["f1","f2","f3"],"domain_analysis":"...","typosquat":"Typosquatting check","ssl_note":"...","risk_level":"Low|Medium|High","action":"..."}`},
+  {id:'social',proto:'Protocol_03',label:'Post Audit',desc:'Social media verification across Reddit and Meta platforms.',icClass:'ic-orange',pcClass:'pc-orange',icon:`<svg viewBox="0 0 24 24" style="width:19px;height:19px;stroke:#f59e0b;fill:none;stroke-width:1.8"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>`,inputModes:['paste','file'],pasteHint:'Paste the post, tweet, caption, or forwarded message exactly as received.',fileHint:'Upload a screenshot (image) of a post, or a .txt/.pdf file with the post content.',fileTypes:['.txt','.png','.jpg','.jpeg','.webp','.pdf'],fileAccept:'.txt,.png,.jpg,.jpeg,.webp,.pdf,text/plain,image/*,application/pdf',examples:['WhatsApp health forward','Viral political tweet','Miracle cure claim'],fields:[['manipulation_tactics','Manipulation tactics'],['verifiability','How to verify'],['ai_likelihood','AI-generated likelihood'],['viral_pattern','Viral pattern']],usecases:[{title:'Fake Cancer Cure WhatsApp Forward',data:'🚨 URGENT! Scientists at IIT Delhi have confirmed that drinking warm turmeric water with black pepper CURES cancer in 3 weeks. Big pharma is suppressing this!! The government doesn\'t want you to know. SHARE THIS BEFORE IT GETS DELETED. [Forwarded 2,841 times]'},{title:'Fake Election Result Tweet',data:'BREAKING: Election Commission sources confirm massive EVM tampering in 47 constituencies. Over 2 crore votes digitally altered. Official results to be cancelled. Retweet before mainstream media buries this!! #EVMScam [23.4K retweets in 2 hours]'},{title:'Genuine Government Announcement',data:'The Ministry of Finance announces the launch of the Unified Pension Scheme (UPS) effective April 1, 2025. Government employees can opt in via the NPS portal at enps.nsdl.com. For details visit finmin.nic.in.'}],prompt:(c)=>`You are a misinformation researcher.\n\nPost:\n---\n${c}\n---\n\nReturn ONLY valid JSON:\n{"verdict":"Genuine|Suspicious|Fake","confidence":82,"summary":"...","findings":["f1","f2","f3"],"manipulation_tactics":"...","verifiability":"...","ai_likelihood":"Low|Medium|High","viral_pattern":"...","action":"..."}`},
+  {id:'article',proto:'Protocol_04',label:'Truth Check',desc:'Article authenticity verification against global archives.',icClass:'ic-red',pcClass:'pc-red',icon:`<svg viewBox="0 0 24 24" style="width:19px;height:19px;stroke:#ef4444;fill:none;stroke-width:1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`,inputModes:['paste','file'],pasteHint:'Paste the article headline, source name, and key body text.',fileHint:'Upload the article as a .pdf, .txt, .doc, or .docx file.',fileTypes:['.txt','.pdf','.doc','.docx','.rtf'],fileAccept:'.txt,.pdf,.doc,.docx,.rtf,text/plain,application/pdf',examples:['5G conspiracy article','Fake study claim','Doctored leader quote'],fields:[['source_credibility','Source credibility'],['bias_detected','Bias detected'],['factual_issues','Factual issues'],['red_flags','Red flags']],usecases:[{title:'5G Cancer Conspiracy Article',data:'Headline: "Declassified WHO Report Confirms 5G Radiation Causes Terminal Cancer"\nSource: healthtruthrevealed.net\n\nA leaked internal WHO document confirms 5G towers emit radiation at frequencies proven to mutate cellular DNA. Major telecom companies have paid governments trillions to suppress this. The document shows a 340% increase in brain tumours in areas with 5G coverage.'},{title:'Credible Reuters News Article',data:'Headline: "India\'s central bank holds interest rates steady at 6.5%"\nSource: Reuters\n\nThe Reserve Bank of India\'s Monetary Policy Committee voted unanimously to keep the benchmark repo rate unchanged at 6.5% on Friday. Governor Shaktikanta Das cited persistent food inflation as a key factor in the decision.'},{title:'Doctored Political Quote Article',data:'Headline: "PM Modi confirms India will ban all private banks by 2025"\nSource: indiatruthpost.blogspot.com\n\nIn a shocking statement made during a closed-door meeting, PM Modi reportedly confirmed plans to nationalise all private sector banks. No official press release has been issued and mainstream media is ignoring the story.'}],prompt:(c)=>`You are a fact-checking expert.\n\nArticle:\n---\n${c}\n---\n\nReturn ONLY valid JSON:\n{"verdict":"Credible|Questionable|Misleading","confidence":80,"summary":"...","findings":["f1","f2","f3"],"source_credibility":"...","bias_detected":"...","factual_issues":"...","red_flags":"...","action":"..."}`},
+  {id:'scam',proto:'Protocol_05',label:'Payload Sentry',desc:'Heuristic fraud audit for scams and social engineering.',icClass:'ic-green',pcClass:'pc-green',icon:`<svg viewBox="0 0 24 24" style="width:19px;height:19px;stroke:#22c55e;fill:none;stroke-width:1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,inputModes:['paste','file'],pasteHint:'Paste the suspicious message, job offer, investment pitch, or prize notification.',fileHint:'Upload a screenshot or .txt/.pdf file of the scam message.',fileTypes:['.txt','.pdf','.png','.jpg','.jpeg'],fileAccept:'.txt,.pdf,.png,.jpg,.jpeg,text/plain,application/pdf,image/*',examples:['Work-from-home offer','Crypto pitch','UPI prize SMS'],fields:[['scam_type','Scam category'],['red_flags','Red flags'],['target_demographics','Who is targeted'],['report_to','Where to report']],usecases:[{title:'YouTube Likes Job Scam',data:'🎉 Congratulations! You have been selected for our premium work-from-home digital marketing program!\n\nEarn Rs. 5,000 - Rs. 15,000 PER DAY by simply liking YouTube videos.\n\nNo experience needed. Work 2-3 hours/day from your phone.\n\nRegistration fee: Rs. 799 (refundable after first task)\nUPI: earnwithtasks@paytm\n\nLimited 50 slots only! WhatsApp NOW: +91 98765 43210'},{title:'Fake Crypto Investment Platform',data:'Hi! I\'m Priya, financial advisor. I joined CryptoNova AI platform and made ₹2.3 lakhs in 3 weeks using their AI trading bot.\n\nThe platform guarantees 35% monthly returns. Minimum investment: ₹10,000.\n\nThis opportunity closes in 48 hours. Join now: cryptonova-ai.io/join?ref=priya291'},{title:'Legitimate Infosys Job Offer',data:'Dear Candidate,\n\nWe are pleased to extend an offer for the position of Systems Engineer at Infosys Limited.\n\nCompensation: ₹3,60,000 per annum CTC\nJoining date: January 15, 2025\nLocation: Electronic City, Bengaluru\n\nNo fee is required at any stage of our hiring process.\nFor queries: recruitment@infosys.com\n\nHR Department, Infosys Limited'}],prompt:(c)=>`You are an anti-fraud expert specializing in Indian cyber scams.\n\nContent:\n---\n${c}\n---\n\nReturn ONLY valid JSON:\n{"verdict":"Legitimate|Suspicious|Scam","confidence":88,"summary":"...","findings":["f1","f2","f3"],"scam_type":"job|investment|UPI|lottery|romance|tech-support|other","red_flags":"...","target_demographics":"...","report_to":"cybercrime.gov.in","action":"..."}`},
+  {id:'deepfake',proto:'Protocol_06',label:'Video Forensic',desc:'Detection of AI-synthesized faces and lip-sync manipulation.',icClass:'ic-pink',pcClass:'pc-pink',icon:`<svg viewBox="0 0 24 24" style="width:19px;height:19px;stroke:#ec4899;fill:none;stroke-width:1.8"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>`,inputModes:['file','paste'],pasteHint:'Describe the video — facial lighting, lip sync, motion artifacts, claimed identity, and where it was shared.',fileHint:'Upload a video file for deepfake forensic analysis. We extract visual and metadata signals.',fileTypes:['.mp4','.mov','.avi','.mkv','.webm','.3gp'],fileAccept:'.mp4,.mov,.avi,.mkv,.webm,.3gp,video/*',fileIsMedia:'video',examples:['Politician deepfake','Celebrity crypto video','News anchor forgery'],fields:[['visual_artifacts','Visual artifacts'],['audio_sync','Audio-visual sync'],['provenance','Source provenance'],['creation_method','Creation method']],usecases:[{title:'PM Modi Free Scheme Deepfake',data:'A 90-second video circulating on WhatsApp shows PM Narendra Modi announcing a "PM Digital Samridhi Yojana" giving ₹50,000 to every household. The lip movements are slightly out of sync with audio. The skin texture looks airbrushed and lighting on the face is inconsistent with the room background. No official PMO watermark. Shared by 1.2 lakh people in 6 hours. Not mentioned on any official government channel.'},{title:'Elon Musk Crypto Endorsement Video',data:'A viral YouTube video shows Elon Musk presenting at what looks like a Tesla event, endorsing a platform called "BitVault AI." His facial expressions seem frozen around the eyes. Blinking is infrequent and mechanical. Background Tesla logo is blurry and low-res. Mouth movements do not match natural speech cadence. Comments flooded with bot accounts sharing referral links.'},{title:'Authentic Presidential Address',data:'A video of US President Joe Biden delivering remarks at the White House Press Briefing Room, sourced directly from the official White House YouTube channel with C-SPAN timestamp watermark. Facial lighting is consistent with the known room setup. Lip movements are natural and correctly synchronized. Speech content matches the official White House press release issued the same day.'}],prompt:(c)=>`You are a deepfake forensics expert. Analyze this video description or metadata for AI manipulation.\n\nContent:\n---\n${c}\n---\n\nReturn ONLY valid JSON:\n{"verdict":"Authentic|Suspicious|Deepfake","confidence":78,"summary":"...","findings":["f1","f2","f3"],"visual_artifacts":"...","audio_sync":"...","provenance":"...","creation_method":"Likely tech: FaceSwap, Wav2Lip, Diffusion, etc.","action":"..."}`},
+  {id:'audio',proto:'Protocol_07',label:'Audio Deepfake Scan',desc:'Neural voice-clone and synthetic speech detection.',icClass:'ic-purple',pcClass:'pc-purple',icon:`<svg viewBox="0 0 24 24" style="width:19px;height:19px;stroke:#a855f7;fill:none;stroke-width:1.8"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>`,inputModes:['file','paste'],pasteHint:'Paste the audio transcript or describe the clip — tone, cadence, claimed identity, platform, and any anomalies you noticed.',fileHint:'Upload an audio file for voice-clone and synthetic speech forensic analysis.',fileTypes:['.mp3','.wav','.ogg','.m4a','.aac','.flac','.wma'],fileAccept:'.mp3,.wav,.ogg,.m4a,.aac,.flac,.wma,audio/*',fileIsMedia:'audio',examples:['Cloned politician voice','Fake CEO call','AI robocall scam'],fields:[['voice_artifacts','Voice artifacts'],['naturalness','Speech naturalness'],['context_anomalies','Context anomalies'],['clone_tech','Likely clone tech']],usecases:[{title:'Obama Bitcoin Endorsement Clone',data:'Audio transcript from a Telegram voice message:\n\n"Hello, this is Barack Obama. After leaving office I\'ve been quietly researching breakthrough investment platforms. I\'m proud to announce my personal endorsement of CryptoNova. I personally invested $2 million and have seen 400% returns."\n\nContext: Voice matches Obama\'s accent but prosody is flat. No natural micro-pauses. Breathing sounds absent. Pitch remains unnaturally constant. Shared in a Telegram group of 80,000 members.'},{title:'Fake CFO Vishing Call',data:'Audio transcript received by a company finance department:\n\n"Hi this is Vikram Nair, I\'m the CFO. I need you to process an emergency payment of ₹42 lakhs. Transfer it to account ending 7734, IFSC ICIC0001247. This is highly confidential, do not log it yet. This must go out by 4pm today."\n\nContext: Voice sounds like the CFO but has unusual flatness. Background noise is synthetic. When the real CFO was contacted on mobile, he confirmed he made no such call.'},{title:'Authentic RBI Governor Speech',data:'Audio transcript from the Reserve Bank of India\'s official press conference on RBI.org.in:\n\n"The Monetary Policy Committee has decided to keep the policy repo rate unchanged at 6.5 percent. Inflation is trending down, but risks remain on the food price front."\n\nContext: Sourced from official RBI YouTube channel. Natural speech patterns observed — appropriate pauses, breathing sounds, occasional hesitation on technical terms.'}],prompt:(c)=>`You are an audio forensics and voice-clone detection expert.\n\nContent:\n---\n${c}\n---\n\nReturn ONLY valid JSON:\n{"verdict":"Authentic|Suspicious|AI-Generated","confidence":75,"summary":"...","findings":["f1","f2","f3"],"voice_artifacts":"...","naturalness":"...","context_anomalies":"...","clone_tech":"ElevenLabs / RVC / Resemble.ai / other","action":"..."}`},
+  {id:'qr',proto:'Protocol_08',label:'QR Quishing Defense',desc:'QR code integrity scan and malicious redirect detection.',icClass:'ic-teal',pcClass:'pc-teal',icon:`<svg viewBox="0 0 24 24" style="width:19px;height:19px;stroke:#14b8a6;fill:none;stroke-width:1.8"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="3" height="3"/><rect x="18" y="18" width="3" height="3"/></svg>`,inputModes:['paste','file'],pasteHint:'Paste the decoded QR code text, UPI payment string, or shortened URL.',fileHint:'Upload an image of the QR code. We analyze its visual structure and decoded content.',fileTypes:['.png','.jpg','.jpeg','.webp','.gif','.bmp'],fileAccept:'.png,.jpg,.jpeg,.webp,.gif,.bmp,image/*',fileIsMedia:'image',examples:['Fake UPI QR','Parking meter QR','IRCTC booking QR'],fields:[['destination_likely','Likely destination'],['risk_type','Risk type'],['physical_risk','Physical context risk'],['safe_action','Safe alternative']],usecases:[{title:'Fake NPCI UPI Payment QR',data:'upi://pay?pa=helpdesk.npci@axisb&pn=NPCI+Customer+Support&am=1&tn=Refund+Processing+Fee&cu=INR'},{title:'Parking Meter Quishing QR',data:'https://park-pay-mumbai.xyz/slot/A14?session=9x72kzm&redirect=https://login.paytm-helpdesk.com/verify'},{title:'Legitimate IRCTC Booking QR',data:'https://www.irctc.co.in/nget/booking/pnr-enquiry?pnrno=4521678903'}],prompt:(c)=>`You are a QR code and link safety expert.\n\nContent: ${c}\n\nReturn ONLY valid JSON:\n{"verdict":"Safe|Suspicious|Malicious","confidence":80,"summary":"...","findings":["f1","f2","f3"],"destination_likely":"...","risk_type":"quishing|fake-payment|malware|credential-theft|safe","physical_risk":"Risk if found on ATM, restaurant, parking meter, etc.","safe_action":"What to do instead","action":"..."}`},
+];
 
-        function abortScan() {
-            if (activeScanInterval) clearInterval(activeScanInterval);
-            document.getElementById('audit-terminal').classList.add('hidden');
-            const btn = document.getElementById('scan-btn');
-            btn.disabled = false;
-            btn.innerHTML = 'Initialize_Scan';
-            document.getElementById('abort-btn').classList.add('hidden');
-            showMessage('SCAN_ABORTED_BY_OPERATOR');
-        }
+/* ═══════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════ */
+let activeModule=null, activeTab='paste', loadedFile=null, loadedFileText='', prevScreen='screenHome';
 
-        async function handleScan(type) {
-            const inputElement = document.getElementById('scan-input');
-            const input = inputElement ? inputElement.value : 'FILE_UPLOAD';
-            
-            const terminal = document.getElementById('audit-terminal');
-            const anchor = document.getElementById('result-anchor');
-            const btn = document.getElementById('scan-btn');
-            const abortBtn = document.getElementById('abort-btn');
-            
-            anchor.innerHTML = '';
-            terminal.classList.remove('hidden');
-            abortBtn.classList.remove('hidden');
-            
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+/* ═══════════════════════════════════════════
+   BUILD UI
+═══════════════════════════════════════════ */
+function buildGrid(){
+  const g=document.getElementById('modGrid');
+  MODULES.forEach(m=>{
+    const c=document.createElement('div'); c.className='mod-card'; c.onclick=()=>openModule(m.id,'screenHome');
+    c.innerHTML=`<div class="card-arrow">›</div><div class="mod-card-icon ${m.icClass}">${m.icon}</div><div class="mod-card-title">${m.label}</div><div class="mod-card-desc">${m.desc}</div><div class="mod-card-proto ${m.pcClass}">${m.proto}</div>`;
+    g.appendChild(c);
+  });
+}
+function buildTestGrid(){
+  const g=document.getElementById('testModGrid');
+  MODULES.forEach(m=>{
+    const p=document.createElement('div'); p.className='test-mod-pill'; p.id='tpill-'+m.id; p.onclick=()=>selectTestMod(m.id);
+    p.innerHTML=`<div class="tmp-icon ${m.icClass}">${m.icon}</div><div class="tmp-name">${m.label}</div><div class="tmp-proto ${m.pcClass}">${m.proto}</div>`;
+    g.appendChild(p);
+  });
+}
 
-            btn.disabled = true;
-            btn.innerHTML = '<div class="loader"></div>';
+/* ═══════════════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════════════ */
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');updateBackBtn();}
+function goHome(){showScreen('screenHome');document.getElementById('backBtn').classList.remove('show');activeModule=null;prevScreen='screenHome';window.scrollTo({top:0,behavior:'smooth'});}
+function goBack(){
+  if(prevScreen==='screenTest'){showScreen('screenTest');document.getElementById('backLabel').textContent=t('backHome');prevScreen='screenHome';}
+  else goHome();
+}
+function goTestPicker(){
+  showScreen('screenTest');document.getElementById('backBtn').classList.add('show');
+  document.getElementById('backLabel').textContent=t('backHome');prevScreen='screenHome';
+  document.querySelectorAll('.test-mod-pill').forEach(p=>p.classList.remove('selected'));
+  document.getElementById('usecasesPanel').classList.remove('show');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function selectTestMod(id){
+  const m=MODULES.find(x=>x.id===id); if(!m) return;
+  document.querySelectorAll('.test-mod-pill').forEach(p=>p.classList.remove('selected'));
+  document.getElementById('tpill-'+id).classList.add('selected');
+  const panel=document.getElementById('usecasesPanel'); panel.classList.add('show');
+  const hi=document.getElementById('ucHdrIcon'); hi.className='uc-hdr-icon '+m.icClass; hi.innerHTML=m.icon;
+  document.getElementById('ucHdrTitle').textContent=m.label+' — Test Cases';
+  const list=document.getElementById('ucList'); list.innerHTML='';
+  m.usecases.forEach((uc,i)=>{
+    const card=document.createElement('div'); card.className='uc-card'; card.onclick=()=>loadTestCase(m.id,uc.data);
+    card.innerHTML=`<div class="uc-num">0${i+1}</div><div class="uc-body"><div class="uc-title">${uc.title}</div><div class="uc-preview">${(uc.data.length>220?uc.data.slice(0,220)+'…':uc.data)}</div></div><div class="uc-load-btn"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>${t('ucLoadBtn')}</div>`;
+    list.appendChild(card);
+  });
+  setTimeout(()=>panel.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
+}
+function loadTestCase(modId,data){openModule(modId,'screenTest',data);}
 
-            const bar = document.getElementById('progress-bar');
-            const val = document.getElementById('progress-val');
-            let p = 0;
-            activeScanInterval = setInterval(() => {
-                if (p < 96) {
-                    p += Math.random() * 8;
-                    if (p > 96) p = 96;
-                    bar.style.width = p + '%';
-                    val.innerText = Math.floor(p) + '%';
-                }
-            }, 250);
+/* ═══════════════════════════════════════════
+   OPEN MODULE
+═══════════════════════════════════════════ */
+function openModule(id,from,preloadData){
+  const m=MODULES.find(x=>x.id===id); if(!m) return;
+  activeModule=m; prevScreen=from||'screenHome';
+  loadedFile=null; loadedFileText='';
+  buildAnalyzeUI(preloadData);
+  showScreen('screenAnalyze');
+  document.getElementById('backBtn').classList.add('show');
+  document.getElementById('backLabel').textContent=from==='screenTest'?t('backTest'):t('backAll');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function rebuildAnalyzeUI(){if(activeModule) buildAnalyzeUI();}
+function buildAnalyzeUI(preloadData){
+  const m=activeModule;
+  document.getElementById('aIcon').className='amh-icon '+m.icClass;
+  document.getElementById('aIcon').innerHTML=m.icon;
+  document.getElementById('aProto').className='amh-proto '+m.pcClass;
+  document.getElementById('aProto').textContent=m.proto;
+  document.getElementById('aTitle').textContent=m.label;
 
-            try {
-                let prompt = "";
-                if (type === 'web') {
-                    prompt = `Forensic URL scan: ${input}. JSON. Domain info, trust index (0-100), owner, tech audit array, domain auth, ssl, reputation, blacklist. Education: explain why. Confidence 0-100. IMPORTANT: RETURN ALL SCORES AS NUMBERS BETWEEN 0 AND 100.`;
-                } else if (type === 'social') {
-                    prompt = `Forensic social media post scan: ${input}. JSON. trust_index (AUTHENTICITY: 80-100 human, 0-40 AI), tech_audit (Synthetic Integrity, Temporal Consistency, Geo-Authenticity scores). Detail fields: AI Status, Region, Age, Metadata. Education: explain why. Confidence 0-100. IMPORTANT: RETURN ALL SCORES AS NUMBERS BETWEEN 0 AND 100.`;
-                } else if (type === 'article') {
-                    prompt = `Forensic article scan: ${input}. JSON. trust_index (AUTHENTICITY score), tech_audit (Linguistic, Global Match, Integrity scores). Detail fields: Writing Signature, Source Originality, Author, Global Match. Education: explain why. Confidence 0-100. IMPORTANT: RETURN ALL SCORES AS NUMBERS BETWEEN 0 AND 100.`;
-                } else if (type === 'payload') {
-                    prompt = `Forensic file scan. JSON. status (safe/suspicious/fraud), trust_index (SAFETY score), tech_audit (Malware, Binary, Impact scores). detail fields: Static Analysis, Binary Signature, Entropy Risk, Heuristic Score. Confidence 0-100. IMPORTANT: RETURN ALL SCORES AS NUMBERS BETWEEN 0 AND 100.`;
-                } else {
-                    prompt = `Forensic email scan: ${input}. JSON. verdict, confidence (0-100), education, safety steps. IMPORTANT: RETURN ALL SCORES AS NUMBERS BETWEEN 0 AND 100.`;
-                }
-                
-                const result = await geminiCall(prompt);
-                currentAuditData = result;
-                
-                clearInterval(activeScanInterval);
-                bar.style.width = '100%';
-                val.innerText = '100%';
-                
-                setTimeout(() => {
-                    terminal.classList.add('hidden');
-                    abortBtn.classList.add('hidden');
-                    renderResult(result, type);
-                    btn.disabled = false;
-                    btn.innerHTML = 'Initialize_Scan';
-                    showMessage('AUDIT_SEQUENCE_RESOLVED');
-                    document.getElementById('result-anchor').scrollIntoView({ behavior: 'smooth' });
-                }, 800);
-            } catch (err) {
-                if (activeScanInterval) clearInterval(activeScanInterval);
-                terminal.classList.add('hidden');
-                abortBtn.classList.add('hidden');
-                btn.disabled = false;
-                btn.innerHTML = 'Initialize_Scan';
-                showMessage('ERROR: SYSTEM_LINK_SEVERED');
-            }
-        }
+  const tabsEl=document.getElementById('inputTabs'); tabsEl.innerHTML='';
+  const tabDefs={
+    paste:{key:'pasteTab',svg:`<svg viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>`},
+    file:{key:'fileTab',svg:`<svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>`},
+    url:{key:'urlTab',svg:`<svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`}
+  };
+  m.inputModes.forEach((mode,i)=>{
+    const btn=document.createElement('button'); btn.className='itab'+(i===0?' active':''); btn.id='itab-'+mode;
+    btn.innerHTML=tabDefs[mode].svg+t(tabDefs[mode].key); btn.onclick=()=>switchTab(mode); tabsEl.appendChild(btn);
+  });
 
-        function renderResult(data, type) {
-            const anchor = document.getElementById('result-anchor');
-            const temp = document.getElementById('result-template');
-            const clone = temp.content.cloneNode(true);
-            
-            // Normalize all scores using helper function
-            const conf = normalizeScore(data.confidence || 0);
-            const trust = normalizeScore(data.trust_index || (data.status === 'safe' ? 95 : 20));
+  document.getElementById('pasteHint').textContent=m.pasteHint||'';
+  document.getElementById('fileHint').textContent=m.fileHint||'';
+  document.getElementById('urlHint').textContent=m.urlHint||'';
+  document.getElementById('pasteInput').placeholder='';
 
-            clone.querySelector('.target-title').innerText = data.domain_name || "Forensic_Audit_Target";
-            clone.querySelector('.target-purpose').innerText = data.purpose || "Diagnostic summary incomplete.";
-            clone.querySelector('.trust-score').innerText = trust + "%";
-            clone.querySelector('.target-owner').innerText = data.owner || "Anonymous";
-            clone.querySelector('.confidence-score').innerText = conf + "%";
-            clone.querySelector(`.light-${data.status}`).classList.add('active');
+  const fdaTypes=document.getElementById('fdaTypes'); fdaTypes.innerHTML='';
+  (m.fileTypes||[]).forEach(ft=>{const s=document.createElement('span');s.className='fda-type';s.textContent=ft;fdaTypes.appendChild(s);});
+  document.getElementById('fileInput').accept=m.fileAccept||'*';
 
-            if (type === 'social' || type === 'article' || type === 'payload') {
-                clone.querySelector('.traffic-light-container').classList.add('hidden');
-                if (type === 'social') {
-                    clone.querySelector('.detail-label-1').innerText = "AI_Generation_Status";
-                    clone.querySelector('.detail-label-2').innerText = "Region_of_Origin";
-                    clone.querySelector('.detail-label-3').innerText = "Post_Temporal_Age";
-                    clone.querySelector('.detail-label-4').innerText = "Metadata_Integrity";
-                    clone.querySelector('.origin-label').innerText = "Platform:";
-                } else if (type === 'article') {
-                    clone.querySelector('.detail-label-1').innerText = "Writing_Signature";
-                    clone.querySelector('.detail-label-2').innerText = "Source_Originality";
-                    clone.querySelector('.detail-label-3').innerText = "Author_Attribution";
-                    clone.querySelector('.detail-label-4').innerText = "Global_Index_Match";
-                    clone.querySelector('.origin-label').innerText = "Publisher:";
-                } else if (type === 'payload') {
-                    clone.querySelector('.detail-label-1').innerText = "Static_Analysis";
-                    clone.querySelector('.detail-label-2').innerText = "Binary_Signature";
-                    clone.querySelector('.detail-label-3').innerText = "Entropy_Risk";
-                    clone.querySelector('.detail-label-4').innerText = "Heuristic_Score";
-                    clone.querySelector('.origin-label').innerText = "Signee:";
-                    clone.querySelector('.traffic-light-container').classList.remove('hidden');
-                }
-            }
+  document.getElementById('exRow').innerHTML=(m.examples||[]).map(e=>`<span class="ex-chip" onclick="fillEx('${e.replace(/'/g,"\\'")}')">${e}</span>`).join('');
+  document.getElementById('pasteInput').value='';
+  document.getElementById('urlInput').value='';
+  resetFileUI();
+  document.getElementById('resultSection').classList.remove('visible');
+  document.getElementById('loadingBlock').classList.remove('show');
+  document.getElementById('analyzeBtn').disabled=false;
+  const lb=document.getElementById('loadedBadge'); lb.classList.remove('show');
 
-            if (data.tech_audit) {
-                const tr = clone.querySelector('#technical-ratings');
-                data.tech_audit.forEach(a => {
-                    const normalizedA = normalizeScore(a.score || 0);
-                    const div = document.createElement('div');
-                    div.className = "p-6 bg-white/5 border border-white/10 rounded-sm";
-                    div.innerHTML = `
-                        <span class="meta-tag !text-white/40 block mb-2 text-[10px]">${a.part}</span>
-                        <div class="text-2xl font-black text-white">${normalizedA}%</div>
-                        <div class="h-1 bg-white/10 mt-2 overflow-hidden"><div class="h-full bg-blue-500" style="width:${normalizedA}%"></div></div>
-                    `;
-                    tr.appendChild(div);
-                });
-            }
+  // Update file drop text
+  document.getElementById('fdaTitle').textContent=t('fileDefault');
+  document.getElementById('fdaSub').textContent=t('fileDefaultSub');
 
-            clone.querySelector('.detail-val-1').innerText = data.detail_1 || "Verified";
-            clone.querySelector('.detail-val-2').innerText = data.detail_2 || "Genuine";
-            clone.querySelector('.detail-val-3').innerText = data.detail_3 || "Consistent";
-            clone.querySelector('.detail-val-4').innerText = data.detail_4 || "Clean";
+  switchTab(m.inputModes[0]);
+  if(preloadData){
+    const firstText=m.inputModes.find(x=>x==='paste')||m.inputModes.find(x=>x==='url');
+    if(firstText){
+      switchTab(firstText);
+      if(firstText==='paste') document.getElementById('pasteInput').value=preloadData;
+      if(firstText==='url') document.getElementById('urlInput').value=preloadData;
+      lb.classList.add('show');
+    }
+  }
+}
 
-            clone.querySelector('.education-text').innerText = data.education;
+function switchTab(mode){
+  activeTab=mode;
+  document.querySelectorAll('.itab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.input-zone').forEach(z=>z.classList.remove('active'));
+  const btn=document.getElementById('itab-'+mode); if(btn) btn.classList.add('active');
+  const zone=document.getElementById('zone-'+mode); if(zone) zone.classList.add('active');
+}
 
-            const adviceList = clone.querySelector('.advice-list');
-            if (data.tactical_advice) {
-                data.tactical_advice.forEach((a, i) => {
-                    const li = document.createElement('li');
-                    li.className = "flex gap-8 font-mono text-xl items-start leading-relaxed text-white border-l-4 border-white/20 pl-10";
-                    li.innerHTML = `<span class="text-white/60 font-black text-2xl">>></span> <span>${a}</span>`;
-                    adviceList.appendChild(li);
-                });
-            }
+/* ═══════════════════════════════════════════
+   FILE HANDLING
+═══════════════════════════════════════════ */
+function handleFileSelect(e){const f=e.target.files[0];if(f) processFile(f);}
+function processFile(file){
+  loadedFile=file;
+  document.getElementById('flName').textContent=file.name;
+  document.getElementById('flSize').textContent=formatBytes(file.size);
+  document.getElementById('fileLoaded').classList.add('show');
+  const pw=document.getElementById('mediaPreview'); pw.innerHTML=''; pw.classList.remove('show');
+  const ftype=activeModule&&activeModule.fileIsMedia;
+  if(ftype==='video'||file.type.startsWith('video/')){const url=URL.createObjectURL(file);pw.innerHTML=`<video controls src="${url}"></video>`;pw.classList.add('show');}
+  else if(ftype==='audio'||file.type.startsWith('audio/')){const url=URL.createObjectURL(file);pw.innerHTML=`<audio controls src="${url}"></audio>`;pw.classList.add('show');}
+  else if(file.type.startsWith('image/')){const url=URL.createObjectURL(file);pw.innerHTML=`<img src="${url}" alt="Uploaded"/>`;pw.classList.add('show');}
+  loadedFileText='';
+  if(file.type==='text/plain'||['txt','eml','mbox','rtf'].some(x=>file.name.endsWith('.'+x))){
+    const r=new FileReader(); r.onload=e=>{loadedFileText=e.target.result.slice(0,8000);}; r.readAsText(file);
+  } else {
+    loadedFileText=`[File uploaded: ${file.name} | Size: ${formatBytes(file.size)} | Type: ${file.type||'unknown'}]\n\nBinary file — metadata extracted for AI forensic analysis. For ${file.type.startsWith('video/')?'video':file.type.startsWith('audio/')?'audio':'image'} files, please add any additional context in the Paste Text tab.`;
+  }
+  document.getElementById('fdaTitle').textContent=t('fileLoaded');
+  document.getElementById('fdaSub').textContent=t('fileReplace');
+}
+function removeFile(){loadedFile=null;loadedFileText='';resetFileUI();}
+function resetFileUI(){
+  loadedFile=null;loadedFileText='';
+  document.getElementById('fileLoaded').classList.remove('show');
+  const pw=document.getElementById('mediaPreview');pw.classList.remove('show');pw.innerHTML='';
+  document.getElementById('fileInput').value='';
+  const fdaT=document.getElementById('fdaTitle');const fdaS=document.getElementById('fdaSub');
+  if(fdaT) fdaT.textContent=t('fileDefault');
+  if(fdaS) fdaS.textContent=t('fileDefaultSub');
+}
+function formatBytes(b){if(b<1024) return b+'B';if(b<1048576) return (b/1024).toFixed(1)+'KB';return (b/1048576).toFixed(1)+'MB';}
 
-            const btns = clone.querySelector('.action-buttons');
-            const download = document.createElement('button');
-            download.className = "bg-white text-black px-12 py-4 rounded-sm font-black uppercase tracking-[0.3em] text-[12px] hover:bg-blue-600 hover:text-white transition-all shadow-xl";
-            download.innerText = "Export_Forensic_Brief (.txt)";
-            download.onclick = () => {
-                let report = `THREATLENS FORENSIC INTELLIGENCE BRIEF\nSTATUS: ${data.status.toUpperCase()}\nAUTHENTICITY INDEX: ${trust}%\nDIAGNOSTIC: ${data.education}\n\nADVICE:\n${data.tactical_advice ? data.tactical_advice.join('\n') : 'N/A'}`;
-                const blob = new Blob([report], { type: 'text/plain' });
-                const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Forensic_Report.txt'; a.click();
-            };
-            btns.appendChild(download);
+// Drag & drop
+document.addEventListener('DOMContentLoaded',()=>{
+  const fda=document.getElementById('fileDropArea');
+  fda.addEventListener('dragover',e=>{e.preventDefault();fda.classList.add('dragover');});
+  fda.addEventListener('dragleave',()=>fda.classList.remove('dragover'));
+  fda.addEventListener('drop',e=>{e.preventDefault();fda.classList.remove('dragover');const f=e.dataTransfer.files[0];if(f) processFile(f);});
+  buildLangMenu();
+  applyTranslations();
+});
 
-            if (trust < 60 || data.status !== 'safe') {
-                const report = document.createElement('a');
-                report.href = "https://cybercrime.gov.in/";
-                report.target = "_blank";
-                report.className = "bg-red-600 text-white px-12 py-4 rounded-sm text-[13px] font-black uppercase tracking-[0.4em] hover:bg-red-700 transition-all shadow-xl flex items-center gap-2";
-                report.innerHTML = `<i data-lucide="shield-alert" class="w-4 h-4"></i> Global_Threat_Registry`;
-                btns.appendChild(report);
-            }
+/* ═══════════════════════════════════════════
+   INPUT / EXAMPLES
+═══════════════════════════════════════════ */
+function fillEx(text){switchTab('paste');document.getElementById('pasteInput').value=text;document.getElementById('pasteInput').focus();showToast(t('toastLoaded'));}
+function clearAll(){document.getElementById('pasteInput').value='';document.getElementById('urlInput').value='';resetFileUI();document.getElementById('resultSection').classList.remove('visible');document.getElementById('loadedBadge').classList.remove('show');}
+function getContent(){
+  if(activeTab==='paste') return document.getElementById('pasteInput').value.trim();
+  if(activeTab==='url') return document.getElementById('urlInput').value.trim();
+  if(activeTab==='file'){
+    if(loadedFileText) return loadedFileText;
+    if(loadedFile) return `[File: ${loadedFile.name}, ${formatBytes(loadedFile.size)}, type: ${loadedFile.type}]`;
+    return '';
+  }
+  return '';
+}
 
-            anchor.appendChild(clone);
-            refreshIcons();
-        }
+/* ═══════════════════════════════════════════
+   VERDICT
+═══════════════════════════════════════════ */
+function vClass(v){const safe=['Safe','Authentic','Genuine','Credible','Legitimate'];const bad=['Malicious','Deepfake','AI-Generated','Manipulated','Fake','Scam','Misleading'];return safe.includes(v)?'safe':bad.includes(v)?'danger':'warn';}
+function setVerdict(v,vc){
+  document.getElementById('vbadge').className=`vbadge v-${vc}`;
+  document.getElementById('vdot').style.background=vc==='safe'?'#22c55e':vc==='danger'?'#ef4444':'#f59e0b';
+  document.getElementById('vtext').textContent=v;
+}
 
-        window.onload = refreshIcons;
-    </script>
+/* ═══════════════════════════════════════════
+   ANALYZE — uses sendPrompt (CORS-safe)
+═══════════════════════════════════════════ */
+async function doAnalyze(){
+  if(!activeModule) return;
+  const content=getContent();
+  if(!content){showToast(t('toastEmpty'));return;}
+  const btn=document.getElementById('analyzeBtn');
+  btn.disabled=true;
+  document.getElementById('resultSection').classList.remove('visible');
+  document.getElementById('loadingBlock').classList.add('show');
+
+  const prompt=`[ThreatLens — ${activeModule.label} Analysis]\n\n${activeModule.prompt(content)}\n\nIMPORTANT: Respond ONLY with valid JSON as specified. No markdown, no extra text.`;
+
+  // Use sendPrompt to route through Claude (works in claude.ai widget without CORS issues)
+  if(typeof sendPrompt === 'function'){
+    document.getElementById('loadingBlock').classList.remove('show');
+    btn.disabled=false;
+    // Show a "sent" state so user knows where to look
+    document.getElementById('summaryBlock').innerHTML=`<span style="color:var(--cyan)">✓ Analysis sent to Claude AI — the result will appear in the chat below this tool in a few seconds.</span>`;
+    document.getElementById('vbadge').className='vbadge v-warn';
+    document.getElementById('vdot').style.background='var(--cyan)';
+    document.getElementById('vtext').textContent='Analyzing…';
+    document.getElementById('confFill').className='conf-fill cf-warn';
+    document.getElementById('confFill').style.width='100%';
+    document.getElementById('confPct').textContent='…';
+    document.getElementById('findingsList').innerHTML='';
+    document.getElementById('detailGrid').innerHTML='';
+    document.getElementById('actionBar').innerHTML='';
+    setCybercrimeBtn('warn');
+    document.getElementById('resultSection').classList.add('visible');
+    sendPrompt(prompt);
+    return;
+  }
+
+  // Fallback: direct API (works when deployed with the anthropic header)
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-opus-4-5',max_tokens:1200,messages:[{role:'user',content:prompt}]})
+    });
+    const json=await res.json();
+    if(json.error) throw new Error(json.error.message);
+    const raw=(json.content||[]).map(b=>b.text||'').join('');
+    let data;
+    try{data=JSON.parse(raw.replace(/```json|```/g,'').trim());}
+    catch(e){data={verdict:'Unknown',confidence:0,summary:raw,findings:[],action:''};}
+    renderResult(data);
+  }catch(err){
+    document.getElementById('loadingBlock').classList.remove('show');
+    setVerdict('Error','danger');
+    document.getElementById('confFill').style.width='0%';document.getElementById('confPct').textContent='—';
+    document.getElementById('summaryBlock').innerHTML=`<span style="color:#ef4444">Analysis failed: ${err.message||'Unknown error.'}</span>`;
+    document.getElementById('findingsList').innerHTML='';document.getElementById('detailGrid').innerHTML='';document.getElementById('actionBar').innerHTML='';
+    setCybercrimeBtn('danger');document.getElementById('resultSection').classList.add('visible');
+    showToast(t('toastFailed'));
+  }
+  btn.disabled=false;
+}
+
+function renderResult(data){
+  document.getElementById('loadingBlock').classList.remove('show');
+  const v=data.verdict||'Unknown',vc=vClass(v);
+  const conf=Math.min(100,Math.max(0,parseInt(data.confidence)||0));
+  setVerdict(v,vc);
+  document.getElementById('confFill').className=`conf-fill cf-${vc}`;
+  setTimeout(()=>{document.getElementById('confFill').style.width=conf+'%';},60);
+  document.getElementById('confPct').textContent=conf+'%';
+  document.getElementById('summaryBlock').textContent=data.summary||'';
+  const dotColor=vc==='safe'?'#22c55e':vc==='danger'?'#ef4444':'#f59e0b';
+  document.getElementById('findingsList').innerHTML=(Array.isArray(data.findings)?data.findings:[]).map(f=>`<li><span class="fi-dot" style="background:${dotColor}"></span>${f}</li>`).join('');
+  document.getElementById('detailGrid').innerHTML=(activeModule.fields||[]).filter(([k])=>data[k]).map(([k,lbl])=>`<div class="detail-card"><div class="dk">${lbl}</div><div class="dv">${data[k]}</div></div>`).join('');
+  document.getElementById('actionBar').innerHTML=data.action?`<strong>Recommended Action:</strong> ${data.action}`:'';
+  setCybercrimeBtn(vc);
+  document.getElementById('resultSection').classList.add('visible');
+  showToast(t('toastDone'));
+  setTimeout(()=>document.getElementById('resultSection').scrollIntoView({behavior:'smooth',block:'start'}),100);
+}
+
+function setCybercrimeBtn(vc){
+  const lbl=document.getElementById('cyberBtnLabel');
+  if(vc==='danger') lbl.textContent=t('cyberDanger');
+  else if(vc==='warn') lbl.textContent=t('cyberWarn');
+  else lbl.textContent=t('cyberSafe');
+}
+
+let toastTimer;
+function showToast(msg){
+  document.getElementById('toastMsg').textContent=msg;
+  const to=document.getElementById('toast');
+  to.classList.add('show');clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>to.classList.remove('show'),3200);
+}
+
+buildGrid();
+buildTestGrid();
+</script>
 </body>
 </html>
