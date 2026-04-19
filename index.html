@@ -1059,25 +1059,36 @@ async function doAnalyze(){
     return;
   }
 
-  // Fallback: direct API (works when deployed with the anthropic header)
+  // Fallback: call the server-side API route (Vercel env var backed).
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
+    const res=await fetch('/api/analyze',{
       method:'POST',
-      headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model:'claude-opus-4-5',max_tokens:1200,messages:[{role:'user',content:prompt}]})
+      headers:{
+        'Content-Type':'application/json'
+      },
+      body:JSON.stringify({
+        prompt
+      })
     });
     const json=await res.json();
-    if(json.error) throw new Error(json.error.message);
-    const raw=(json.content||[]).map(b=>b.text||'').join('');
+    if(!res.ok){
+      console.error('ThreatLens API Error:', json);
+      const msg = json?.error || json?.message || ('HTTP '+res.status);
+      throw new Error(msg);
+    }
+    let raw=(json?.raw||'').trim();
+    if(!raw) throw new Error('Gemini returned an empty response.');
+
     let data;
     try{data=JSON.parse(raw.replace(/```json|```/g,'').trim());}
     catch(e){data={verdict:'Unknown',confidence:0,summary:raw,findings:[],action:''};}
     renderResult(data);
   }catch(err){
+    console.error('Analysis error:', err);
     document.getElementById('loadingBlock').classList.remove('show');
     setVerdict('Error','danger');
     document.getElementById('confFill').style.width='0%';document.getElementById('confPct').textContent='—';
-    document.getElementById('summaryBlock').innerHTML=`<span style="color:#ef4444">Analysis failed: ${err.message||'Unknown error.'}</span>`;
+    document.getElementById('summaryBlock').innerHTML=`<span style="color:#ef4444">Analysis failed: ${err.message||'Unknown error.'} (see browser console for details)</span>`;
     document.getElementById('findingsList').innerHTML='';document.getElementById('detailGrid').innerHTML='';document.getElementById('actionBar').innerHTML='';
     setCybercrimeBtn('danger');document.getElementById('resultSection').classList.add('visible');
     showToast(t('toastFailed'));

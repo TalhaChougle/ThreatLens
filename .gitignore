@@ -1,0 +1,14 @@
+# Environment secrets
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Vercel local config
+.vercel
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
