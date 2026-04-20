@@ -1059,9 +1059,9 @@ async function doAnalyze(){
     return;
   }
 
-  // Fallback: call the server-side API route (Vercel env var backed).
+  // Fallback: call the server-side API route (Netlify Function + env var backed).
   try{
-    const res=await fetch('/api/analyze',{
+    const res=await fetch('/.netlify/functions/analyze',{
       method:'POST',
       headers:{
         'Content-Type':'application/json'

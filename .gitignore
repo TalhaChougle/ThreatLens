@@ -5,8 +5,9 @@
 .env.test.local
 .env.production.local
 
-# Vercel local config
+# Deployment local config
 .vercel
+.netlify
 
 # OS/editor
 .DS_Store
